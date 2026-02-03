@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PortfolioDTO {
+public class PortfolioTargetDTO {
+    private Long targetId;
     private Long portfolioId;
-    private Long userId;
-    private String portfolioName;
-    private String baseCurrency;
-    private LocalDateTime createdAt;
+    private String assetType;
+    private BigDecimal targetPercentage;
 }
+

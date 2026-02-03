@@ -83,15 +83,11 @@ public class AnalyticsService {
     }
 
     private List<Holding> getHoldingsByPortfolio(Long portfolioId) {
-        return holdingRepository.findAll().stream()
-                .filter(holding -> Objects.equals(holding.getPortfolioId(), portfolioId))
-                .collect(Collectors.toList());
+        return holdingRepository.findByPortfolioId(portfolioId);
     }
 
     private List<PortfolioTarget> getTargetsByPortfolio(Long portfolioId) {
-        return portfolioTargetRepository.findAll().stream()
-                .filter(target -> Objects.equals(target.getPortfolioId(), portfolioId))
-                .collect(Collectors.toList());
+        return portfolioTargetRepository.findByPortfolioId(portfolioId);
     }
 
     private BigDecimal holdingMarketValue(Holding holding) {

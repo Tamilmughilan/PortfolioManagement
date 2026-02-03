@@ -16,7 +16,11 @@ public class PortfolioTarget {
     @Column(name = "portfolio_id", nullable = false)
     private Long portfolioId;
 
-    @Column(name = "asset_type", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "portfolio_id", insertable = false, updatable = false)
+    private Portfolio portfolio;
+
+    @Column(name = "asset_type", nullable = false, length = 50)
     private String assetType;
 
     @Column(name = "target_percentage", precision = 5, scale = 2, nullable = false)
