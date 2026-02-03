@@ -10,14 +10,11 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class HoldingDTO {
-    private Long holdingId;
+public class PortfolioSnapshotDTO {
+    private Long snapshotId;
     private Long portfolioId;
-    private String assetName;
-    private String assetType;
-    private BigDecimal quantity;
-    private BigDecimal purchasePrice;
-    private BigDecimal currentPrice;
+    private BigDecimal totalValue;
     private String currency;
-    private LocalDate purchaseDate;
+    private LocalDate snapshotDate;
 }
+
