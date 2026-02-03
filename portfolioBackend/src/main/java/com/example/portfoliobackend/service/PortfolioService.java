@@ -42,9 +42,7 @@ public class PortfolioService {
     }
 
     public List<Portfolio> getPortfoliosByUserId(Long userId) {
-        return portfolioRepository.findAll().stream()
-                .filter(portfolio -> Objects.equals(portfolio.getUserId(), userId))
-                .collect(Collectors.toList());
+        return portfolioRepository.findByUserId(userId);
     }
 
     public Portfolio getPortfolioById(Long portfolioId) {
@@ -89,9 +87,7 @@ public class PortfolioService {
     }
 
     public List<Holding> getHoldingsByPortfolioId(Long portfolioId) {
-        return holdingRepository.findAll().stream()
-                .filter(holding -> Objects.equals(holding.getPortfolioId(), portfolioId))
-                .collect(Collectors.toList());
+        return holdingRepository.findByPortfolioId(portfolioId);
     }
 
     public Holding getHoldingById(Long holdingId) {
@@ -151,9 +147,7 @@ public class PortfolioService {
     }
 
     public List<PortfolioTarget> getTargetsByPortfolioId(Long portfolioId) {
-        return portfolioTargetRepository.findAll().stream()
-                .filter(target -> Objects.equals(target.getPortfolioId(), portfolioId))
-                .collect(Collectors.toList());
+        return portfolioTargetRepository.findByPortfolioId(portfolioId);
     }
 
     public PortfolioTarget getTargetById(Long targetId) {
@@ -195,9 +189,7 @@ public class PortfolioService {
     }
 
     public List<PortfolioSnapshot> getSnapshotsByPortfolioId(Long portfolioId) {
-        return portfolioSnapshotRepository.findAll().stream()
-                .filter(snapshot -> Objects.equals(snapshot.getPortfolioId(), portfolioId))
-                .collect(Collectors.toList());
+        return portfolioSnapshotRepository.findByPortfolioIdOrderBySnapshotDateDesc(portfolioId);
     }
 
     public PortfolioSnapshot getSnapshotById(Long snapshotId) {
@@ -265,6 +257,7 @@ public class PortfolioService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<PortfolioSnapshot> refreshAndGetSnapshots(Long portfolioId, String currency) {
         BigDecimal totalValue = calculateTotalValue(portfolioId);
         recordSnapshot(portfolioId, totalValue, currency);
