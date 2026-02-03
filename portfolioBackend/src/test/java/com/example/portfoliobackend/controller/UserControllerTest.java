@@ -8,20 +8,30 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
 @DisplayName("UserController Integration Tests")
@@ -33,7 +43,7 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private UserService userService;
 
     private User testUser;
@@ -56,7 +66,8 @@ class UserControllerTest {
         user2.setUsername("user2");
         user2.setEmail("user2@example.com");
 
-        when(userService.getAllUsers()).thenReturn(Arrays.asList(testUser, user2));
+        List<User> users = Arrays.asList(testUser, user2);
+        when(userService.getAllUsers()).thenReturn(users);
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
@@ -143,7 +154,7 @@ class UserControllerTest {
         updatedUser.setEmail("updated@example.com");
         updatedUser.setDefaultCurrency("USD");
 
-        when(userService.updateUser(anyLong(), any(User.class))).thenReturn(updatedUser);
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
 
         mockMvc.perform(put("/api/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +163,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.username", is("updateduser")))
                 .andExpect(jsonPath("$.email", is("updated@example.com")));
 
-        verify(userService, times(1)).updateUser(anyLong(), any(User.class));
+        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
     }
 
     @Test
@@ -161,7 +172,7 @@ class UserControllerTest {
         User updateData = new User();
         updateData.setUsername("updateduser");
 
-        when(userService.updateUser(anyLong(), any(User.class))).thenReturn(null);
+        when(userService.updateUser(eq(999L), any(User.class))).thenReturn(null);
 
         mockMvc.perform(put("/api/users/999")
                         .contentType(MediaType.APPLICATION_JSON)

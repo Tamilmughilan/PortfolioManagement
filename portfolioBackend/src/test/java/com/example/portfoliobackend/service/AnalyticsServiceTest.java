@@ -16,10 +16,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AnalyticsService Unit Tests")
@@ -77,8 +80,8 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate total market value correctly")
         void getTotalMarketValue_ShouldReturnCorrectValue() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = analyticsService.getTotalMarketValue(1L);
 
@@ -106,8 +109,8 @@ class AnalyticsServiceTest {
             nullQuantityHolding.setCurrentPrice(new BigDecimal("100"));
             // quantity is null
 
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, nullQuantityHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, nullQuantityHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = analyticsService.getTotalMarketValue(1L);
 
@@ -123,8 +126,8 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate total cost correctly")
         void getTotalCost_ShouldReturnCorrectValue() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = analyticsService.getTotalCost(1L);
 
@@ -142,8 +145,8 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate gain correctly when profitable")
         void getTotalGainLoss_WhenProfitable_ShouldReturnPositive() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = analyticsService.getTotalGainLoss(1L);
 
@@ -159,8 +162,8 @@ class AnalyticsServiceTest {
             stockHolding.setCurrentPrice(new BigDecimal("80")); // Loss
             bondHolding.setCurrentPrice(new BigDecimal("40")); // Loss
 
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = analyticsService.getTotalGainLoss(1L);
 
@@ -178,8 +181,8 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate allocation values by asset type")
         void getAllocationValues_ShouldReturnValuesByAssetType() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             Map<String, BigDecimal> result = analyticsService.getAllocationValues(1L);
 
@@ -191,8 +194,8 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate allocation percentages correctly")
         void getAllocationPercentages_ShouldReturnCorrectPercentages() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             Map<String, BigDecimal> result = analyticsService.getAllocationPercentages(1L);
 
@@ -221,10 +224,11 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should calculate target drift correctly")
         void getTargetDriftPercentages_ShouldReturnCorrectDrift() {
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding, bondHolding));
-            when(portfolioTargetRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockTarget, bondTarget));
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            List<PortfolioTarget> targets = Arrays.asList(stockTarget, bondTarget);
+            
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
+            when(portfolioTargetRepository.findByPortfolioId(1L)).thenReturn(targets);
 
             Map<String, BigDecimal> result = analyticsService.getTargetDriftPercentages(1L);
 
@@ -239,10 +243,11 @@ class AnalyticsServiceTest {
         @DisplayName("Should return zero drift for missing asset types")
         void getTargetDriftPercentages_WhenAssetTypeMissing_ShouldReturnNegativeTarget() {
             // Only stock holdings, but bond target exists
-            when(holdingRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockHolding));
-            when(portfolioTargetRepository.findByPortfolioId(1L))
-                    .thenReturn(Arrays.asList(stockTarget, bondTarget));
+            List<Holding> holdings = Arrays.asList(stockHolding);
+            List<PortfolioTarget> targets = Arrays.asList(stockTarget, bondTarget);
+            
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
+            when(portfolioTargetRepository.findByPortfolioId(1L)).thenReturn(targets);
 
             Map<String, BigDecimal> result = analyticsService.getTargetDriftPercentages(1L);
 
@@ -253,4 +258,3 @@ class AnalyticsServiceTest {
         }
     }
 }
-

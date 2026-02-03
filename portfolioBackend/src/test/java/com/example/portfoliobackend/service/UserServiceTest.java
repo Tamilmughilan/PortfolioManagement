@@ -18,7 +18,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserService Unit Tests")
@@ -50,7 +55,8 @@ class UserServiceTest {
         user2.setUsername("user2");
         user2.setEmail("user2@example.com");
 
-        when(userRepository.findAll()).thenReturn(Arrays.asList(testUser, user2));
+        List<User> users = Arrays.asList(testUser, user2);
+        when(userRepository.findAll()).thenReturn(users);
 
         List<User> result = userService.getAllUsers();
 
@@ -89,7 +95,6 @@ class UserServiceTest {
         User newUser = new User();
         newUser.setUsername("newuser");
         newUser.setEmail("new@example.com");
-        // defaultCurrency is null
 
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User saved = invocation.getArgument(0);
@@ -182,4 +187,3 @@ class UserServiceTest {
         verify(userRepository, never()).deleteById(anyLong());
     }
 }
-

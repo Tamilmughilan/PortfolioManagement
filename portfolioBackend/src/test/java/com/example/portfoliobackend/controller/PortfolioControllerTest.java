@@ -12,22 +12,30 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PortfolioController.class)
 @DisplayName("PortfolioController Integration Tests")
@@ -39,7 +47,7 @@ class PortfolioControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @MockitoBean
     private PortfolioService portfolioService;
 
     private Portfolio testPortfolio;
@@ -88,7 +96,8 @@ class PortfolioControllerTest {
         @Test
         @DisplayName("GET /api/portfolios - Should return all portfolios")
         void getAllPortfolios_ShouldReturnList() throws Exception {
-            when(portfolioService.getAllPortfolios()).thenReturn(Arrays.asList(testPortfolio));
+            List<Portfolio> portfolios = Arrays.asList(testPortfolio);
+            when(portfolioService.getAllPortfolios()).thenReturn(portfolios);
 
             mockMvc.perform(get("/api/portfolios"))
                     .andExpect(status().isOk())
@@ -99,7 +108,8 @@ class PortfolioControllerTest {
         @Test
         @DisplayName("GET /api/portfolios/user/{userId} - Should return user portfolios")
         void getPortfoliosByUser_ShouldReturnUserPortfolios() throws Exception {
-            when(portfolioService.getPortfoliosByUserId(1L)).thenReturn(Arrays.asList(testPortfolio));
+            List<Portfolio> portfolios = Arrays.asList(testPortfolio);
+            when(portfolioService.getPortfoliosByUserId(1L)).thenReturn(portfolios);
 
             mockMvc.perform(get("/api/portfolios/user/1"))
                     .andExpect(status().isOk())
@@ -157,7 +167,8 @@ class PortfolioControllerTest {
         @DisplayName("GET /api/portfolios/{id}/holdings - Should return holdings")
         void getHoldings_ShouldReturnHoldingsList() throws Exception {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
-            when(portfolioService.getHoldingsByPortfolioId(1L)).thenReturn(Arrays.asList(testHolding));
+            List<Holding> holdings = Arrays.asList(testHolding);
+            when(portfolioService.getHoldingsByPortfolioId(1L)).thenReturn(holdings);
 
             mockMvc.perform(get("/api/portfolios/1/holdings"))
                     .andExpect(status().isOk())
@@ -206,7 +217,8 @@ class PortfolioControllerTest {
         @DisplayName("GET /api/portfolios/{id}/targets - Should return targets")
         void getTargets_ShouldReturnTargetsList() throws Exception {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
-            when(portfolioService.getTargetsByPortfolioId(1L)).thenReturn(Arrays.asList(testTarget));
+            List<PortfolioTarget> targets = Arrays.asList(testTarget);
+            when(portfolioService.getTargetsByPortfolioId(1L)).thenReturn(targets);
 
             mockMvc.perform(get("/api/portfolios/1/targets"))
                     .andExpect(status().isOk())
@@ -236,7 +248,8 @@ class PortfolioControllerTest {
         @DisplayName("GET /api/portfolios/{id}/snapshots - Should return snapshots")
         void getSnapshots_ShouldReturnSnapshotsList() throws Exception {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
-            when(portfolioService.getSnapshotsByPortfolioId(1L)).thenReturn(Arrays.asList(testSnapshot));
+            List<PortfolioSnapshot> snapshots = Arrays.asList(testSnapshot);
+            when(portfolioService.getSnapshotsByPortfolioId(1L)).thenReturn(snapshots);
 
             mockMvc.perform(get("/api/portfolios/1/snapshots"))
                     .andExpect(status().isOk())
@@ -248,8 +261,8 @@ class PortfolioControllerTest {
         @DisplayName("POST /api/portfolios/{id}/snapshots/refresh - Should refresh snapshots")
         void refreshSnapshots_ShouldReturnUpdatedSnapshots() throws Exception {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
-            when(portfolioService.refreshAndGetSnapshots(anyLong(), any()))
-                    .thenReturn(Arrays.asList(testSnapshot));
+            List<PortfolioSnapshot> snapshots = Arrays.asList(testSnapshot);
+            when(portfolioService.refreshAndGetSnapshots(eq(1L), isNull())).thenReturn(snapshots);
 
             mockMvc.perform(post("/api/portfolios/1/snapshots/refresh"))
                     .andExpect(status().isOk())
@@ -276,7 +289,8 @@ class PortfolioControllerTest {
         @DisplayName("GET /api/portfolios/{id}/asset-types - Should return asset types")
         void getAssetTypes_ShouldReturnTypesList() throws Exception {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
-            when(portfolioService.listAssetTypes(1L)).thenReturn(Arrays.asList("STOCK", "BOND"));
+            List<String> assetTypes = Arrays.asList("STOCK", "BOND");
+            when(portfolioService.listAssetTypes(1L)).thenReturn(assetTypes);
 
             mockMvc.perform(get("/api/portfolios/1/asset-types"))
                     .andExpect(status().isOk())

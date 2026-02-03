@@ -28,7 +28,11 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("PortfolioService Unit Tests")
@@ -95,7 +99,8 @@ class PortfolioServiceTest {
         @Test
         @DisplayName("Should return all portfolios")
         void getAllPortfolios_ShouldReturnAllPortfolios() {
-            when(portfolioRepository.findAll()).thenReturn(Arrays.asList(testPortfolio));
+            List<Portfolio> portfolios = Arrays.asList(testPortfolio);
+            when(portfolioRepository.findAll()).thenReturn(portfolios);
 
             List<Portfolio> result = portfolioService.getAllPortfolios();
 
@@ -107,7 +112,8 @@ class PortfolioServiceTest {
         @Test
         @DisplayName("Should return portfolios by user ID")
         void getPortfoliosByUserId_ShouldReturnUserPortfolios() {
-            when(portfolioRepository.findByUserId(1L)).thenReturn(Arrays.asList(testPortfolio));
+            List<Portfolio> portfolios = Arrays.asList(testPortfolio);
+            when(portfolioRepository.findByUserId(1L)).thenReturn(portfolios);
 
             List<Portfolio> result = portfolioService.getPortfoliosByUserId(1L);
 
@@ -215,7 +221,8 @@ class PortfolioServiceTest {
         @Test
         @DisplayName("Should return holdings by portfolio ID")
         void getHoldingsByPortfolioId_ShouldReturnHoldings() {
-            when(holdingRepository.findByPortfolioId(1L)).thenReturn(Arrays.asList(testHolding));
+            List<Holding> holdings = Arrays.asList(testHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             List<Holding> result = portfolioService.getHoldingsByPortfolioId(1L);
 
@@ -284,7 +291,8 @@ class PortfolioServiceTest {
         @Test
         @DisplayName("Should return targets by portfolio ID")
         void getTargetsByPortfolioId_ShouldReturnTargets() {
-            when(portfolioTargetRepository.findByPortfolioId(1L)).thenReturn(Arrays.asList(testTarget));
+            List<PortfolioTarget> targets = Arrays.asList(testTarget);
+            when(portfolioTargetRepository.findByPortfolioId(1L)).thenReturn(targets);
 
             List<PortfolioTarget> result = portfolioService.getTargetsByPortfolioId(1L);
 
@@ -313,8 +321,9 @@ class PortfolioServiceTest {
         @Test
         @DisplayName("Should return snapshots by portfolio ID ordered by date desc")
         void getSnapshotsByPortfolioId_ShouldReturnOrderedSnapshots() {
+            List<PortfolioSnapshot> snapshots = Arrays.asList(testSnapshot);
             when(portfolioSnapshotRepository.findByPortfolioIdOrderBySnapshotDateDesc(1L))
-                    .thenReturn(Arrays.asList(testSnapshot));
+                    .thenReturn(snapshots);
 
             List<PortfolioSnapshot> result = portfolioService.getSnapshotsByPortfolioId(1L);
 
@@ -354,7 +363,8 @@ class PortfolioServiceTest {
             holding2.setQuantity(new BigDecimal("5"));
             holding2.setCurrentPrice(new BigDecimal("200"));
 
-            when(holdingRepository.findByPortfolioId(1L)).thenReturn(Arrays.asList(holding1, holding2));
+            List<Holding> holdings = Arrays.asList(holding1, holding2);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             BigDecimal result = portfolioService.calculateTotalValue(1L);
 
@@ -384,7 +394,8 @@ class PortfolioServiceTest {
             Holding holding3 = new Holding();
             holding3.setAssetType("STOCK");
 
-            when(holdingRepository.findByPortfolioId(1L)).thenReturn(Arrays.asList(holding1, holding2, holding3));
+            List<Holding> holdings = Arrays.asList(holding1, holding2, holding3);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
 
             List<String> result = portfolioService.listAssetTypes(1L);
 
@@ -393,4 +404,3 @@ class PortfolioServiceTest {
         }
     }
 }
-
