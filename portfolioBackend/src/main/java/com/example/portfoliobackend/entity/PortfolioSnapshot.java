@@ -17,12 +17,16 @@ public class PortfolioSnapshot {
     @Column(name = "portfolio_id", nullable = false)
     private Long portfolioId;
 
-    @Column(name = "total_value")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "portfolio_id", insertable = false, updatable = false)
+    private Portfolio portfolio;
+
+    @Column(name = "total_value", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalValue;
 
     @Column(length = 3)
     private String currency = "INR";
 
-    @Column(name = "snapshot_date")
+    @Column(name = "snapshot_date", nullable = false)
     private LocalDate snapshotDate;
 }

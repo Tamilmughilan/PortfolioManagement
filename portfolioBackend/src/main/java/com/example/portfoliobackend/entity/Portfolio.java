@@ -16,13 +16,17 @@ public class Portfolio {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "portfolio_name", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
+    @Column(name = "portfolio_name", nullable = false, length = 100)
     private String portfolioName;
 
     @Column(name = "base_currency", length = 3)
     private String baseCurrency = "INR";
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
