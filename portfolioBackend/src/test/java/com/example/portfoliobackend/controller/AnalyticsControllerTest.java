@@ -8,17 +8,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.anEmptyMap;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AnalyticsController.class)
 @DisplayName("AnalyticsController Integration Tests")
@@ -27,10 +33,10 @@ class AnalyticsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private AnalyticsService analyticsService;
 
-    @MockBean
+    @MockitoBean
     private PortfolioService portfolioService;
 
     private Portfolio testPortfolio;
@@ -126,8 +132,8 @@ class AnalyticsControllerTest {
     @DisplayName("GET /api/analytics/portfolios/{id}/target-drift - Should return drift percentages")
     void getTargetDrift_ShouldReturnDrift() throws Exception {
         Map<String, BigDecimal> drift = new HashMap<>();
-        drift.put("STOCK", new BigDecimal("-5.00")); // Under target
-        drift.put("BOND", new BigDecimal("5.00")); // Over target
+        drift.put("STOCK", new BigDecimal("-5.00"));
+        drift.put("BOND", new BigDecimal("5.00"));
 
         when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
         when(analyticsService.getTargetDriftPercentages(1L)).thenReturn(drift);

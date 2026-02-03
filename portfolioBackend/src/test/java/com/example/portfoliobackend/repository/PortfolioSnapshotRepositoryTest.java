@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @ActiveProfiles("test")
 @DisplayName("PortfolioSnapshotRepository Integration Tests")
 class PortfolioSnapshotRepositoryTest {
@@ -162,7 +164,7 @@ class PortfolioSnapshotRepositoryTest {
         for (int i = 90; i >= 0; i -= 30) {
             PortfolioSnapshot snapshot = new PortfolioSnapshot();
             snapshot.setPortfolioId(testPortfolio.getPortfolioId());
-            snapshot.setTotalValue(new BigDecimal(10000 + (90 - i) * 100)); // Growing value
+            snapshot.setTotalValue(new BigDecimal(10000 + (90 - i) * 100));
             snapshot.setSnapshotDate(LocalDate.now().minusDays(i));
             entityManager.persist(snapshot);
         }
@@ -177,4 +179,3 @@ class PortfolioSnapshotRepositoryTest {
                 .isGreaterThan(snapshots.get(snapshots.size() - 1).getTotalValue());
     }
 }
-
