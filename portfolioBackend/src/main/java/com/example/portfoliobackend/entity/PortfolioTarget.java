@@ -16,6 +16,46 @@ public class PortfolioTarget {
     @Column(name = "portfolio_id", nullable = false)
     private Long portfolioId;
 
+    public Long getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(Long targetId) {
+        this.targetId = targetId;
+    }
+
+    public Long getPortfolioId() {
+        return portfolioId;
+    }
+
+    public void setPortfolioId(Long portfolioId) {
+        this.portfolioId = portfolioId;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
+
+    public String getAssetType() {
+        return assetType;
+    }
+
+    public void setAssetType(String assetType) {
+        this.assetType = assetType;
+    }
+
+    public BigDecimal getTargetPercentage() {
+        return targetPercentage;
+    }
+
+    public void setTargetPercentage(BigDecimal targetPercentage) {
+        this.targetPercentage = targetPercentage;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "portfolio_id", insertable = false, updatable = false)
     private Portfolio portfolio;
