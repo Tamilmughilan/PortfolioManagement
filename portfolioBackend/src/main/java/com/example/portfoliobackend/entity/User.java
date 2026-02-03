@@ -1,7 +1,5 @@
 package com.example.portfoliobackend.entity;
 
-
-
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -12,11 +10,17 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long userId;
 
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false)
     private String email;
-    private String defaultCurrency;
+
+    @Column(name = "default_currency", length = 3)
+    private String defaultCurrency = "INR";
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
