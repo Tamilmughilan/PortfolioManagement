@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Plus, RefreshCw } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
-import { getAllUsers, getUserPortfolios } from './services/api';
+import AnalyticsPage from './pages/AnalyticsPage';
+import AddHoldingModal from './components/AddHoldingModal';
+import AuthPage from './pages/AuthPage';import PortfolioDriftPage from './pages/PortfolioDriftPage';
+import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
 
 function App() {
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [selectedUser, setSelectedUser] = useState(1);
-  const [selectedPortfolio, setSelectedPortfolio] = useState(1);
-  const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [selectedPortfolio, setSelectedPortfolio] = useState(null);
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddHolding, setShowAddHolding] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const usersResponse = await getAllUsers();
-        setUsers(usersResponse.data);
-        
-        if (usersResponse.data.length > 0) {
-          const firstUser = usersResponse.data[0];
-          setSelectedUser(firstUser.userId);
-          
-          const portfoliosResponse = await getUserPortfolios(firstUser.userId);
+        const storedUser = localStorage.getItem('authUser');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setCurrentUser(parsedUser);
+          const portfoliosResponse = await getUserPortfolios(parsedUser.userId);
           setPortfolios(portfoliosResponse.data);
-          
           if (portfoliosResponse.data.length > 0) {
             setSelectedPortfolio(portfoliosResponse.data[0].portfolioId);
           }
@@ -42,59 +42,149 @@ function App() {
     fetchData();
   }, []);
 
-  const handleUserChange = async (userId) => {
-    setSelectedUser(userId);
+  const handleLogin = async (user) => {
+    setCurrentUser(user);
+    setLoading(true);
     try {
-      const response = await getUserPortfolios(userId);
+      const response = await getUserPortfolios(user.userId);
       setPortfolios(response.data);
-      if (response.data.length > 0) {
-        setSelectedPortfolio(response.data[0].portfolioId);
-      }
+      setSelectedPortfolio(response.data.length > 0 ? response.data[0].portfolioId : null);
     } catch (err) {
       console.error('Error loading portfolios:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div className="loading-screen">Loading...</div>;
+  const handleLogout = () => {
+    localStorage.removeItem('authUser');
+    setCurrentUser(null);
+    setSelectedPortfolio(null);
+    setPortfolios([]);
+  };
+
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
+
+  const handleHoldingAdded = () => {
+    handleRefresh();
+  };
+
+  if (!currentUser && !loading) {
+    return <AuthPage onAuthenticated={handleLogin} />;
   }
 
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner"></div>
+        <p>Loading your portfolio...</p>
+      </div>
+    );
+  }
+
+  const renderContent = () => {
+    if (!selectedPortfolio) {
+      return (
+        <div className="no-portfolio">
+          <h2>No Portfolio Selected</h2>
+          <p>Create or select a portfolio to get started</p>
+        </div>
+      );
+    }
+
+    switch (activeSection) {
+      case 'dashboard':
+        return <Dashboard key={refreshKey} portfolioId={selectedPortfolio} />;
+      case 'performance':
+        return <AnalyticsPage key={refreshKey} portfolioId={selectedPortfolio} />;
+      case 'portfolio':
+        return (
+          <div className="coming-soon">
+            <h2>Portfolio Management</h2>
+            <p>Detailed portfolio management features coming soon...</p>
+            <p>Use the "Add Holding" button to add investments</p>
+          </div>
+        );
+      case 'assets':
+        return (
+          <div className="coming-soon">
+            <h2>Assets Overview</h2>
+            <p>Detailed assets breakdown coming soon...</p>
+          </div>
+        );
+      case 'drift':
+        return <PortfolioDriftPage key={refreshKey} portfolioId={selectedPortfolio} />;
+      default:
+        return <Dashboard key={refreshKey} portfolioId={selectedPortfolio} />;
+    }
+  };
+
   return (
-    <div className={`app ${isDark ? 'dark' : 'light'}`}>
-      <Navbar activeSection={activeSection} onSectionChange={setActiveSection} />
+    <div className={`app ${isDark ? 'dark' : 'light'}`} data-theme={isDark ? 'dark' : 'light'}>
+      <Navbar
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        onLogout={handleLogout}
+        user={currentUser}
+      />
       
       <main className="main-content">
         <div className="top-bar">
-          <div className="user-portfolio-selector">
-            <select value={selectedUser} onChange={(e) => handleUserChange(Number(e.target.value))}>
-              {users.map(user => (
-                <option key={user.userId} value={user.userId}>
-                  {user.username}
-                </option>
-              ))}
-            </select>
-            
-            <select value={selectedPortfolio} onChange={(e) => setSelectedPortfolio(Number(e.target.value))}>
-              {portfolios.map(portfolio => (
-                <option key={portfolio.portfolioId} value={portfolio.portfolioId}>
-                  {portfolio.portfolioName}
-                </option>
-              ))}
-            </select>
+          <div className="top-bar-left">
+            <div className="user-portfolio-selector">
+              <div className="selector-group">
+                <label>Portfolio</label>
+                <select 
+                  value={selectedPortfolio || ''} 
+                  onChange={(e) => setSelectedPortfolio(Number(e.target.value))}
+                  disabled={portfolios.length === 0}
+                >
+                  {portfolios.length === 0 ? (
+                    <option value="">No portfolios</option>
+                  ) : (
+                    portfolios.map(portfolio => (
+                      <option key={portfolio.portfolioId} value={portfolio.portfolioId}>
+                        {portfolio.portfolioName}
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+            </div>
           </div>
 
-          <button className="theme-toggle" onClick={toggleTheme}>
-            {isDark ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          <div className="top-bar-right">
+            {selectedPortfolio && (
+              <>
+                <button className="action-btn add-btn" onClick={() => setShowAddHolding(true)}>
+                  <Plus size={18} />
+                  <span>Add Holding</span>
+                </button>
+                <button className="action-btn refresh-btn" onClick={handleRefresh} title="Refresh data">
+                  <RefreshCw size={18} />
+                </button>
+              </>
+            )}
+            <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          </div>
         </div>
 
         <div className="page-content">
-          {activeSection === 'dashboard' && <Dashboard portfolioId={selectedPortfolio} />}
-          {activeSection === 'portfolio' && <div className="placeholder">Portfolio Management Coming Soon</div>}
-          {activeSection === 'assets' && <div className="placeholder">Assets Page Coming Soon</div>}
-          {activeSection === 'performance' && <div className="placeholder">Performance Analytics Coming Soon</div>}
+          {renderContent()}
         </div>
       </main>
+
+      {showAddHolding && selectedPortfolio && (
+        <AddHoldingModal
+          portfolioId={selectedPortfolio}
+          onClose={() => setShowAddHolding(false)}
+          onSuccess={handleHoldingAdded}
+        />
+      )}
     </div>
   );
 }

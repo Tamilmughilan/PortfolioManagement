@@ -1,0 +1,125 @@
+.carousel-container {
+    width: 100%;
+    position: relative;
+}
+
+.rb-carousel .carousel-viewport {
+    background: radial-gradient(circle at top, rgba(220, 38, 38, 0.08), transparent 55%);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.carousel-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.carousel-viewport {
+    flex: 1;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.carousel-track {
+    display: grid;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-item {
+    padding: 0.5rem;
+    animation: fadeSlideIn 0.5s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carousel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+}
+
+.carousel-btn:hover:not(.disabled) {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+}
+
+.carousel-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.indicator:hover {
+    background: var(--primary);
+    opacity: 0.6;
+}
+
+.indicator.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    width: 28px;
+    border-radius: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .carousel-container[data-items="3"] .carousel-track {
+        grid-template-columns: repeat(auto-fit, 50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-container .carousel-track {
+        grid-template-columns: repeat(auto-fit, 100%);
+    }
+
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .carousel-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+}

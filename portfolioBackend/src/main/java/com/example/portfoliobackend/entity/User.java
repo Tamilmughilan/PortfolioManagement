@@ -1,5 +1,6 @@
 package com.example.portfoliobackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -56,8 +57,20 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
     @Column(nullable = false, length = 100)
     private String email;
+
+    @JsonIgnore
+    @Column(name = "password_hash", length = 255)
+    private String passwordHash;
 
     @Column(name = "default_currency", length = 3)
     private String defaultCurrency = "INR";

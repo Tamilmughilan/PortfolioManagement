@@ -4,6 +4,7 @@ CREATE TABLE users (
     user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(100) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255),
     default_currency VARCHAR(3) DEFAULT 'INR',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
