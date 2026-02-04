@@ -60,7 +60,7 @@ public class PortfolioService {
     @Transactional
     public Portfolio updatePortfolio(Long portfolioId, Portfolio updated) {
         Optional<Portfolio> existing = portfolioRepository.findById(portfolioId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -105,7 +105,7 @@ public class PortfolioService {
     @Transactional
     public Holding updateHolding(Long holdingId, Holding updated) {
         Optional<Holding> existing = holdingRepository.findById(holdingId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -162,7 +162,7 @@ public class PortfolioService {
     @Transactional
     public PortfolioTarget updateTarget(Long targetId, PortfolioTarget updated) {
         Optional<PortfolioTarget> existing = portfolioTargetRepository.findById(targetId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -199,7 +199,7 @@ public class PortfolioService {
     @Transactional
     public PortfolioSnapshot updateSnapshot(Long snapshotId, PortfolioSnapshot updated) {
         Optional<PortfolioSnapshot> existing = portfolioSnapshotRepository.findById(snapshotId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 

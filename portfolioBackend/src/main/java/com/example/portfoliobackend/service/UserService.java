@@ -38,7 +38,7 @@ public class UserService {
     @Transactional
     public User updateUser(Long id, User updated) {
         Optional<User> existing = userRepository.findById(id);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
