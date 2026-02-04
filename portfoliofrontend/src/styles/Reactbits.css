@@ -1,0 +1,181 @@
+/* Reactbits-inspired UI atoms (red/white palette) */
+.rb-card {
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.rb-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+      300px circle at 20% 10%,
+      rgba(220, 38, 38, 0.18),
+      transparent 50%
+    ),
+    radial-gradient(
+      300px circle at 90% 80%,
+      rgba(225, 29, 72, 0.18),
+      transparent 45%
+    );
+  transition: opacity 0.3s ease;
+}
+
+.rb-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+.rb-card:hover::before {
+  opacity: 1;
+}
+
+.rb-accent-primary {
+  border-left: 4px solid var(--primary);
+}
+
+.rb-accent-secondary {
+  border-left: 4px solid var(--secondary);
+}
+
+.rb-accent-muted {
+  border-left: 4px solid var(--border);
+}
+
+.rb-section-header {
+  margin-bottom: 2rem;
+}
+
+.rb-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rb-section-title h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rb-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.16), rgba(225, 29, 72, 0.2));
+  color: var(--primary);
+}
+
+.rb-section-header p {
+  color: var(--text-light);
+  margin-top: 0.35rem;
+}
+
+.rb-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rb-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.rb-stat-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.rb-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(220, 38, 38, 0.25);
+}
+
+.rb-stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.rb-stat-subtext {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.rb-trend-positive .rb-stat-value {
+  color: var(--success);
+}
+
+.rb-trend-negative .rb-stat-value {
+  color: var(--danger);
+}
+
+.rb-skeleton {
+  overflow: hidden;
+}
+
+.rb-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  transform: translateX(-100%);
+  animation: rb-shimmer 1.8s infinite;
+}
+
+.rb-skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(220, 38, 38, 0.1);
+  margin-bottom: 12px;
+}
+
+.rb-skeleton-title {
+  height: 18px;
+  width: 65%;
+}
+
+.rb-skeleton-line:last-child {
+  margin-bottom: 0;
+  width: 80%;
+}
+
+@keyframes rb-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -1,33 +1,73 @@
 .holding-card {
-  background-color: var(--bg-white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  background: var(--bg-white);
+  border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  animation: holdingCardSlideIn 0.5s ease forwards;
+  opacity: 0;
+}
+
+@keyframes holdingCardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.holding-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  opacity: 0.8;
+}
+
+.holding-card.stock::before {
+  background: linear-gradient(90deg, #DC2626, #E11D48);
+}
+
+.holding-card.bond::before {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.holding-card.mutual_fund::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.holding-card.etf::before {
+  background: linear-gradient(90deg, #06b6d4, #22d3ee);
+}
+
+.holding-card.crypto::before {
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.holding-card.gold::before {
+  background: linear-gradient(90deg, #eab308, #facc15);
+}
+
+.holding-card.cash::before {
+  background: linear-gradient(90deg, #64748b, #94a3b8);
+}
+
+.holding-card.real_estate::before {
+  background: linear-gradient(90deg, #84cc16, #a3e635);
 }
 
 .holding-card:hover {
+  transform: translateY(-6px) scale(1.02);
   box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
-}
-
-.holding-card.equity {
-  border-left: 4px solid #667eea;
-}
-
-.holding-card.bond {
-  border-left: 4px solid #48bb78;
-}
-
-.holding-card.mutualfund {
-  border-left: 4px solid #ed8936;
-}
-
-.holding-card.sip {
-  border-left: 4px solid #9f7aea;
 }
 
 .holding-header {
@@ -35,40 +75,45 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .holding-name h3 {
   font-size: 1.1rem;
+  font-weight: 600;
   color: var(--text-dark);
   margin-bottom: 0.25rem;
 }
 
 .asset-type {
   font-size: 0.75rem;
-  color: var(--text-light);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  color: var(--text-light);
+  font-weight: 500;
+  background: var(--bg-light);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
 }
 
 .gain-loss-badge {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .gain-loss-badge.positive {
-  background-color: rgba(72, 187, 120, 0.1);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--success);
 }
 
 .gain-loss-badge.negative {
-  background-color: rgba(245, 101, 101, 0.1);
+  background: rgba(239, 68, 68, 0.1);
   color: var(--danger);
 }
 
@@ -76,23 +121,22 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  padding: 1rem 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
   margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .holding-stat {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
 }
 
 .holding-stat .label {
   font-size: 0.75rem;
   color: var(--text-light);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.3px;
 }
 
 .holding-stat .value {
@@ -102,64 +146,80 @@
 }
 
 .holding-footer {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1rem;
 }
 
-.holding-footer > div {
+.holding-footer>div {
   display: flex;
   flex-direction: column;
+  gap: 0.25rem;
 }
 
 .holding-footer .label {
   font-size: 0.75rem;
   color: var(--text-light);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.25rem;
+  letter-spacing: 0.3px;
 }
 
 .holding-footer .value {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-dark);
 }
 
 .holding-gain-loss {
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.75rem;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
 }
 
 .holding-gain-loss.positive {
-  background-color: rgba(72, 187, 120, 0.1);
-  color: var(--success);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
 }
 
 .holding-gain-loss.negative {
-  background-color: rgba(245, 101, 101, 0.1);
-  color: var(--danger);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.1));
 }
 
 .holding-gain-loss .label {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  color: var(--text-light);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  opacity: 0.8;
+  letter-spacing: 0.3px;
 }
 
 .holding-gain-loss .value {
-  font-weight: 600;
   font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.holding-gain-loss.positive .value {
+  color: var(--success);
+}
+
+.holding-gain-loss.negative .value {
+  color: var(--danger);
 }
 
 .holding-date {
-  text-align: center;
-  color: var(--text-light);
+  text-align: right;
+}
+
+.holding-date small {
   font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .holding-body {
+    grid-template-columns: 1fr 1fr;
+  }
 }

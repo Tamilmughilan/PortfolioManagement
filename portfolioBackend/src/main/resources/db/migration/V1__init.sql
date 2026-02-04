@@ -1,2 +1,0 @@
--- Migration file intentionally cleared per user request. Original content removed.
--- Add migrations here when ready.

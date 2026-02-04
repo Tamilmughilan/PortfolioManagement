@@ -295,6 +295,15 @@ public class PortfolioController {
         return ResponseEntity.ok(dashboard);
     }
 
+    @GetMapping("/{portfolioId}/drift-story")
+    public ResponseEntity<com.example.portfoliobackend.dto.PortfolioDriftDTO> getPortfolioDriftStory(@PathVariable Long portfolioId) {
+        com.example.portfoliobackend.dto.PortfolioDriftDTO drift = portfolioService.getPortfolioDriftStory(portfolioId);
+        if (drift == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(drift);
+    }
+
     public static class SnapshotRequest {
         private BigDecimal totalValue;
         private String currency;
