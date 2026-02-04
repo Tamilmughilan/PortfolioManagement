@@ -286,6 +286,15 @@ public class PortfolioController {
         return ResponseEntity.ok(portfolioService.listAssetTypes(portfolioId));
     }
 
+    @GetMapping("/{portfolioId}/dashboard")
+    public ResponseEntity<com.example.portfoliobackend.dto.PortfolioDashboardDTO> getPortfolioDashboard(@PathVariable Long portfolioId) {
+        com.example.portfoliobackend.dto.PortfolioDashboardDTO dashboard = portfolioService.getPortfolioDashboard(portfolioId);
+        if (dashboard == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(dashboard);
+    }
+
     public static class SnapshotRequest {
         private BigDecimal totalValue;
         private String currency;
