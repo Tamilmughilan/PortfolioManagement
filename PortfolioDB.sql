@@ -28,6 +28,18 @@ CREATE TABLE portfolio_targets (
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id)
 );
 
+-- Portfolio goals (goal-based forecasting)
+CREATE TABLE portfolio_goals (
+    goal_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    portfolio_id BIGINT NOT NULL,
+    goal_name VARCHAR(120) NOT NULL,
+    target_amount DECIMAL(18,2) NOT NULL,
+    target_date DATE NOT NULL,
+    expected_annual_return DECIMAL(5,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id)
+);
+
 -- Holdings table
 CREATE TABLE holdings (
     holding_id BIGINT PRIMARY KEY AUTO_INCREMENT,

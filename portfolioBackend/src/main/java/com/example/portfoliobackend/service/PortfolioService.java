@@ -8,6 +8,7 @@ import com.example.portfoliobackend.repository.HoldingRepository;
 import com.example.portfoliobackend.repository.PortfolioRepository;
 import com.example.portfoliobackend.repository.PortfolioSnapshotRepository;
 import com.example.portfoliobackend.repository.PortfolioTargetRepository;
+import com.example.portfoliobackend.repository.PortfolioGoalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,9 @@ public class PortfolioService {
 
     @Autowired
     private PortfolioSnapshotRepository portfolioSnapshotRepository;
+
+    @Autowired
+    private PortfolioGoalRepository portfolioGoalRepository;
 
     public List<Portfolio> getAllPortfolios() {
         return portfolioRepository.findAll();
@@ -199,6 +203,53 @@ public class PortfolioService {
 
     public PortfolioSnapshot getSnapshotById(Long snapshotId) {
         return portfolioSnapshotRepository.findById(snapshotId).orElse(null);
+    }
+
+    public List<com.example.portfoliobackend.entity.PortfolioGoal> getGoalsByPortfolioId(Long portfolioId) {
+        return portfolioGoalRepository.findByPortfolioId(portfolioId);
+    }
+
+    public com.example.portfoliobackend.entity.PortfolioGoal getGoalById(Long goalId) {
+        return portfolioGoalRepository.findById(goalId).orElse(null);
+    }
+
+    @Transactional
+    public com.example.portfoliobackend.entity.PortfolioGoal addGoal(com.example.portfoliobackend.entity.PortfolioGoal goal) {
+        return portfolioGoalRepository.save(goal);
+    }
+
+    @Transactional
+    public com.example.portfoliobackend.entity.PortfolioGoal updateGoal(Long goalId, com.example.portfoliobackend.entity.PortfolioGoal updated) {
+        Optional<com.example.portfoliobackend.entity.PortfolioGoal> existing = portfolioGoalRepository.findById(goalId);
+        if (!existing.isPresent()) {
+            return null;
+        }
+        com.example.portfoliobackend.entity.PortfolioGoal goal = existing.get();
+        if (updated.getGoalName() != null) {
+            goal.setGoalName(updated.getGoalName());
+        }
+        if (updated.getTargetAmount() != null) {
+            goal.setTargetAmount(updated.getTargetAmount());
+        }
+        if (updated.getTargetDate() != null) {
+            goal.setTargetDate(updated.getTargetDate());
+        }
+        if (updated.getExpectedAnnualReturn() != null) {
+            goal.setExpectedAnnualReturn(updated.getExpectedAnnualReturn());
+        }
+        if (updated.getPortfolioId() != null) {
+            goal.setPortfolioId(updated.getPortfolioId());
+        }
+        return portfolioGoalRepository.save(goal);
+    }
+
+    @Transactional
+    public boolean deleteGoal(Long goalId) {
+        if (!portfolioGoalRepository.existsById(goalId)) {
+            return false;
+        }
+        portfolioGoalRepository.deleteById(goalId);
+        return true;
     }
 
     @Transactional

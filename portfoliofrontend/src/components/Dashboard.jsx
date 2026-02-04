@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, Layers } from 'lucide-react';
-import { getPortfolioDashboard } from '../services/api';
+import { TrendingUp, TrendingDown, DollarSign, Layers, Newspaper } from 'lucide-react';
+import { getMarketNews, getPortfolioDashboard } from '../services/api';
 import HoldingCard from './HoldingCard';
 import Carousel from './Carousel';
 import StatCard from './reactbits/StatCard';
@@ -13,6 +13,8 @@ const Dashboard = ({ portfolioId }) => {
   const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [news, setNews] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -28,8 +30,21 @@ const Dashboard = ({ portfolioId }) => {
       }
     };
 
+    const fetchNews = async () => {
+      try {
+        setNewsLoading(true);
+        const response = await getMarketNews();
+        setNews(response.data || []);
+      } catch (err) {
+        setNews([]);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+
     if (portfolioId) {
       fetchDashboard();
+      fetchNews();
     }
   }, [portfolioId]);
 
@@ -143,6 +158,53 @@ const Dashboard = ({ portfolioId }) => {
           ))}
         </div>
       </GlowCard>
+
+      <div className="news-section">
+        <div className="news-header">
+          <h2>
+            <Newspaper size={20} /> Market Headlines
+          </h2>
+          <p>Latest market movers and macro headlines.</p>
+        </div>
+
+        {newsLoading ? (
+          <div className="news-grid">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonCard key={index} lines={3} />
+            ))}
+          </div>
+        ) : news.length === 0 ? (
+          <div className="empty-holdings">No news available. Add your API key to see headlines.</div>
+        ) : news.length <= 3 ? (
+          <div className="news-grid">
+            {news.map(item => (
+              <GlowCard key={item.url} className="news-card">
+                {item.image && <img src={item.image} alt={item.headline} />}
+                <div className="news-body">
+                  <span className="news-source">{item.source}</span>
+                  <h3>{item.headline}</h3>
+                  <p>{item.summary}</p>
+                  <a href={item.url} target="_blank" rel="noreferrer">Read more</a>
+                </div>
+              </GlowCard>
+            ))}
+          </div>
+        ) : (
+          <Carousel itemsPerView={3} autoPlay autoPlayInterval={6000} className="rb-carousel">
+            {news.map(item => (
+              <GlowCard key={item.url} className="news-card">
+                {item.image && <img src={item.image} alt={item.headline} />}
+                <div className="news-body">
+                  <span className="news-source">{item.source}</span>
+                  <h3>{item.headline}</h3>
+                  <p>{item.summary}</p>
+                  <a href={item.url} target="_blank" rel="noreferrer">Read more</a>
+                </div>
+              </GlowCard>
+            ))}
+          </Carousel>
+        )}
+      </div>
     </div>
   );
 };
