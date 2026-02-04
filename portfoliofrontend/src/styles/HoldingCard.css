@@ -1,0 +1,165 @@
+.holding-card {
+  background-color: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.holding-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.holding-card.equity {
+  border-left: 4px solid #667eea;
+}
+
+.holding-card.bond {
+  border-left: 4px solid #48bb78;
+}
+
+.holding-card.mutualfund {
+  border-left: 4px solid #ed8936;
+}
+
+.holding-card.sip {
+  border-left: 4px solid #9f7aea;
+}
+
+.holding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.holding-name h3 {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 0.25rem;
+}
+
+.asset-type {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gain-loss-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.gain-loss-badge.positive {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--success);
+}
+
+.gain-loss-badge.negative {
+  background-color: rgba(245, 101, 101, 0.1);
+  color: var(--danger);
+}
+
+.holding-body {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.holding-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.holding-stat .label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.holding-stat .value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.holding-footer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.holding-footer > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.holding-footer .label {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.holding-footer .value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.holding-gain-loss {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.holding-gain-loss.positive {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: var(--success);
+}
+
+.holding-gain-loss.negative {
+  background-color: rgba(245, 101, 101, 0.1);
+  color: var(--danger);
+}
+
+.holding-gain-loss .label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.holding-gain-loss .value {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.holding-date {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
