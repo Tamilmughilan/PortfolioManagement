@@ -8,6 +8,10 @@ import AuthPage from './pages/AuthPage';
 import PortfolioDriftPage from './pages/PortfolioDriftPage';
 import PortfolioManagerPage from './pages/PortfolioManagerPage';
 import GoalsForecastPage from './pages/GoalsForecastPage';
+import AssetsPage from './pages/AssetsPage';
+import TargetsPage from './pages/TargetsPage';
+import SnapshotsPage from './pages/SnapshotsPage';
+import ProfilePage from './pages/ProfilePage';
 import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
@@ -104,7 +108,7 @@ function App() {
   }
 
   const renderContent = () => {
-    if (!selectedPortfolio && activeSection !== 'portfolio') {
+    if (!selectedPortfolio && !['portfolio', 'profile'].includes(activeSection)) {
       return (
         <div className="no-portfolio">
           <h2>No Portfolio Selected</h2>
@@ -121,12 +125,16 @@ function App() {
       case 'portfolio':
         return <PortfolioManagerPage user={currentUser} onPortfoliosUpdated={handlePortfoliosUpdated} />;
       case 'assets':
-        return (
-          <div className="coming-soon">
-            <h2>Assets Overview</h2>
-            <p>Detailed assets breakdown coming soon...</p>
-          </div>
-        );
+        return <AssetsPage portfolioId={selectedPortfolio} onHoldingUpdated={handleRefresh} />;
+      case 'targets':
+        return <TargetsPage portfolioId={selectedPortfolio} />;
+      case 'snapshots':
+        return <SnapshotsPage portfolioId={selectedPortfolio} />;
+      case 'profile':
+        return <ProfilePage user={currentUser} onUserUpdated={(updated) => {
+          setCurrentUser(updated);
+          localStorage.setItem('authUser', JSON.stringify(updated));
+        }} />;
       case 'drift':
         return <PortfolioDriftPage key={refreshKey} portfolioId={selectedPortfolio} />;
       case 'goals':

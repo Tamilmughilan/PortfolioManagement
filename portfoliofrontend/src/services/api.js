@@ -13,6 +13,7 @@ const api = axios.create({
 export const getAllUsers = () => api.get('/users');
 export const getUserById = (userId) => api.get(`/users/${userId}`);
 export const createUser = (userData) => api.post('/users', userData);
+export const updateUser = (userId, userData) => api.put(`/users/${userId}`, userData);
 
 // ==================== AUTH APIs ====================
 export const signup = (payload) => api.post('/auth/signup', payload);
@@ -57,6 +58,10 @@ export const getMarketNews = () => api.get('/market/news');
 // ==================== SNAPSHOTS APIs ====================
 export const getSnapshots = (portfolioId) => api.get(`/portfolios/${portfolioId}/snapshots`);
 export const recordSnapshot = (portfolioId, snapshotData) => api.post(`/portfolios/${portfolioId}/snapshots`, snapshotData);
+export const updateSnapshot = (portfolioId, snapshotId, snapshotData) =>
+  api.put(`/portfolios/${portfolioId}/snapshots/${snapshotId}`, snapshotData);
+export const deleteSnapshot = (portfolioId, snapshotId) =>
+  api.delete(`/portfolios/${portfolioId}/snapshots/${snapshotId}`);
 export const refreshSnapshots = (portfolioId, currency) => {
   const params = currency ? `?currency=${currency}` : '';
   return api.post(`/portfolios/${portfolioId}/snapshots/refresh${params}`);
