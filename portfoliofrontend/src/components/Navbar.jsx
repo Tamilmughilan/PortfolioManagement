@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, DollarSign, TrendingUp, TrendingDown, Settings, LogOut, Home, UserCircle2, Target } from 'lucide-react';
+import { BarChart3, DollarSign, TrendingUp, TrendingDown, LogOut, Home, UserCircle2, Target, Layers } from 'lucide-react';
 import '../styles/Navbar.css';
 
 const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
@@ -9,6 +9,8 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
     { id: 'assets', label: 'Assets', icon: DollarSign },
     { id: 'performance', label: 'Performance', icon: TrendingUp },
     { id: 'goals', label: 'Goals', icon: Target },
+    { id: 'targets', label: 'Targets', icon: Layers },
+    { id: 'snapshots', label: 'Snapshots', icon: Layers },
     { id: 'drift', label: 'Drift Story', icon: TrendingDown },
   ];
 
@@ -48,9 +50,9 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
       </ul>
 
       <div className="navbar-footer">
-        <button className="nav-item">
-          <Settings size={20} />
-          <span>Settings</span>
+        <button className="nav-item" onClick={() => onSectionChange('profile')}>
+          <UserCircle2 size={20} />
+          <span>Profile</span>
         </button>
         <button className="nav-item" onClick={onLogout}>
           <LogOut size={20} />
