@@ -42,6 +42,10 @@ public class PortfolioController {
 
     @PostMapping
     public ResponseEntity<Portfolio> createPortfolio(@RequestBody Portfolio portfolio) {
+        // Basic validation to avoid DB constraint violations that surface as 500
+        if (portfolio == null || portfolio.getUserId() == null || portfolio.getPortfolioName() == null || portfolio.getPortfolioName().trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         Portfolio created = portfolioService.createPortfolio(portfolio);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -325,3 +329,4 @@ public class PortfolioController {
         }
     }
 }
+
