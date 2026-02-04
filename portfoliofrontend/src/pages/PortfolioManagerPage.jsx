@@ -10,19 +10,23 @@ import SectionHeader from '../components/reactbits/SectionHeader';
 import GlowCard from '../components/reactbits/GlowCard';
 import '../styles/PortfolioManager.css';
 
-const PortfolioManagerPage = ({ user }) => {
+const PortfolioManagerPage = ({ user, onPortfoliosUpdated }) => {
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [formState, setFormState] = useState({ portfolioName: '', baseCurrency: 'INR' });
   const [editingId, setEditingId] = useState(null);
 
-  const loadPortfolios = async () => {
+  const loadPortfolios = async (preferredId) => {
     if (!user?.userId) return;
     try {
       setLoading(true);
       const response = await getUserPortfolios(user.userId);
-      setPortfolios(response.data || []);
+      const items = response.data || [];
+      setPortfolios(items);
+      if (onPortfoliosUpdated) {
+        onPortfoliosUpdated(items, preferredId);
+      }
       setError('');
     } catch (err) {
       setError('Unable to load portfolios.');
@@ -48,20 +52,21 @@ const PortfolioManagerPage = ({ user }) => {
     }
     try {
       if (editingId) {
-        await updatePortfolio(editingId, {
+        const response = await updatePortfolio(editingId, {
           portfolioName: formState.portfolioName,
           baseCurrency: formState.baseCurrency
         });
+        await loadPortfolios(response.data?.portfolioId);
       } else {
-        await createPortfolio({
+        const response = await createPortfolio({
           portfolioName: formState.portfolioName,
           baseCurrency: formState.baseCurrency,
           userId: user.userId
         });
+        await loadPortfolios(response.data?.portfolioId);
       }
       setFormState({ portfolioName: '', baseCurrency: 'INR' });
       setEditingId(null);
-      loadPortfolios();
     } catch (err) {
       setError('Unable to save portfolio.');
     }
@@ -78,7 +83,7 @@ const PortfolioManagerPage = ({ user }) => {
   const handleDelete = async (portfolioId) => {
     try {
       await deletePortfolio(portfolioId);
-      loadPortfolios();
+      await loadPortfolios();
     } catch (err) {
       setError('Unable to delete portfolio.');
     }

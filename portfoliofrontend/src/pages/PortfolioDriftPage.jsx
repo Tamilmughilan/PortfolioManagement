@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
-import { getPortfolioDriftStory } from '../services/api';
+import { getPortfolioDriftStory, refreshSnapshots } from '../services/api';
 import SectionHeader from '../components/reactbits/SectionHeader';
 import StatCard from '../components/reactbits/StatCard';
 import GlowCard from '../components/reactbits/GlowCard';
@@ -11,6 +11,7 @@ const PortfolioDriftPage = ({ portfolioId }) => {
   const [drift, setDrift] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const loadDrift = async () => {
@@ -29,6 +30,21 @@ const PortfolioDriftPage = ({ portfolioId }) => {
 
     loadDrift();
   }, [portfolioId]);
+
+  const handleRefreshStory = async () => {
+    if (!portfolioId) return;
+    try {
+      setRefreshing(true);
+      await refreshSnapshots(portfolioId);
+      const response = await getPortfolioDriftStory(portfolioId);
+      setDrift(response.data);
+      setError(null);
+    } catch (err) {
+      setError('Unable to refresh drift story.');
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -65,11 +81,21 @@ const PortfolioDriftPage = ({ portfolioId }) => {
 
   return (
     <div className="drift-page">
-      <SectionHeader
-        title="Portfolio Drift"
-        subtitle="A clear story of how your portfolio evolved from day one."
-        icon={<BookOpen size={22} />}
-      />
+      <div className="drift-header-row">
+        <SectionHeader
+          title="Portfolio Drift"
+          subtitle="A clear story of how your portfolio evolved from day one."
+          icon={<BookOpen size={22} />}
+        />
+        <button
+          className="drift-refresh-btn"
+          onClick={handleRefreshStory}
+          disabled={refreshing}
+          type="button"
+        >
+          {refreshing ? 'Refreshing...' : 'Refresh Drift Story'}
+        </button>
+      </div>
 
       <div className="drift-hero">
         <GlowCard className="drift-hero-card">
