@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,8 +20,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
+@ActiveProfiles("test")
 @DisplayName("UserController Integration Tests")
 class UserControllerTest {
 
@@ -46,6 +50,7 @@ class UserControllerTest {
     private UserService userService;
 
     private User testUser;
+    private User testUser2;
 
     @BeforeEach
     void setUp() {
@@ -55,17 +60,21 @@ class UserControllerTest {
         testUser.setEmail("test@example.com");
         testUser.setDefaultCurrency("USD");
         testUser.setCreatedAt(LocalDateTime.now());
+
+        testUser2 = new User();
+        testUser2.setUserId(2L);
+        testUser2.setUsername("user2");
+        testUser2.setEmail("user2@example.com");
+        testUser2.setDefaultCurrency("INR");
+        testUser2.setCreatedAt(LocalDateTime.now());
     }
+
+    // ==================== GET ALL USERS ====================
 
     @Test
     @DisplayName("GET /api/users - Should return all users")
     void getAllUsers_ShouldReturnUserList() throws Exception {
-        User user2 = new User();
-        user2.setUserId(2L);
-        user2.setUsername("user2");
-        user2.setEmail("user2@example.com");
-
-        List<User> users = Arrays.asList(testUser, user2);
+        List<User> users = Arrays.asList(testUser, testUser2);
         when(userService.getAllUsers()).thenReturn(users);
 
         mockMvc.perform(get("/api/users"))
@@ -73,7 +82,9 @@ class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].username", is("testuser")))
-                .andExpect(jsonPath("$[1].username", is("user2")));
+                .andExpect(jsonPath("$[0].email", is("test@example.com")))
+                .andExpect(jsonPath("$[1].username", is("user2")))
+                .andExpect(jsonPath("$[1].email", is("user2@example.com")));
 
         verify(userService, times(1)).getAllUsers();
     }
@@ -85,8 +96,27 @@ class UserControllerTest {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
+
+        verify(userService, times(1)).getAllUsers();
     }
+
+    @Test
+    @DisplayName("GET /api/users - Should return single user list")
+    void getAllUsers_WithOneUser_ShouldReturnSingleItemList() throws Exception {
+        List<User> users = Arrays.asList(testUser);
+        when(userService.getAllUsers()).thenReturn(users);
+
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].userId", is(1)));
+
+        verify(userService, times(1)).getAllUsers();
+    }
+
+    // ==================== GET USER BY ID ====================
 
     @Test
     @DisplayName("GET /api/users/{id} - Should return user when exists")
@@ -98,7 +128,8 @@ class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.userId", is(1)))
                 .andExpect(jsonPath("$.username", is("testuser")))
-                .andExpect(jsonPath("$.email", is("test@example.com")));
+                .andExpect(jsonPath("$.email", is("test@example.com")))
+                .andExpect(jsonPath("$.defaultCurrency", is("USD")));
 
         verify(userService, times(1)).getUserById(1L);
     }
@@ -113,6 +144,21 @@ class UserControllerTest {
 
         verify(userService, times(1)).getUserById(999L);
     }
+
+    @Test
+    @DisplayName("GET /api/users/{id} - Should return user with different ID")
+    void getUserById_WithDifferentId_ShouldReturnCorrectUser() throws Exception {
+        when(userService.getUserById(2L)).thenReturn(testUser2);
+
+        mockMvc.perform(get("/api/users/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId", is(2)))
+                .andExpect(jsonPath("$.username", is("user2")));
+
+        verify(userService, times(1)).getUserById(2L);
+    }
+
+    // ==================== CREATE USER ====================
 
     @Test
     @DisplayName("POST /api/users - Should create user")
@@ -135,10 +181,64 @@ class UserControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.userId", is(1)))
                 .andExpect(jsonPath("$.username", is("newuser")))
+                .andExpect(jsonPath("$.email", is("new@example.com")))
                 .andExpect(jsonPath("$.defaultCurrency", is("INR")));
 
         verify(userService, times(1)).createUser(any(User.class));
     }
+
+    @Test
+    @DisplayName("POST /api/users - Should create user with custom currency")
+    void createUser_WithCustomCurrency_ShouldReturnUser() throws Exception {
+        User newUser = new User();
+        newUser.setUsername("newuser");
+        newUser.setEmail("new@example.com");
+        newUser.setDefaultCurrency("USD");
+
+        User savedUser = new User();
+        savedUser.setUserId(1L);
+        savedUser.setUsername("newuser");
+        savedUser.setEmail("new@example.com");
+        savedUser.setDefaultCurrency("USD");
+
+        when(userService.createUser(any(User.class))).thenReturn(savedUser);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.defaultCurrency", is("USD")));
+
+        verify(userService, times(1)).createUser(any(User.class));
+    }
+
+    @Test
+    @DisplayName("POST /api/users - Should create user with minimal data")
+    void createUser_WithMinimalData_ShouldReturnCreatedUser() throws Exception {
+        User newUser = new User();
+        newUser.setUsername("minimaluser");
+        newUser.setEmail("minimal@example.com");
+
+        User savedUser = new User();
+        savedUser.setUserId(3L);
+        savedUser.setUsername("minimaluser");
+        savedUser.setEmail("minimal@example.com");
+        savedUser.setDefaultCurrency("INR");
+        savedUser.setCreatedAt(LocalDateTime.now());
+
+        when(userService.createUser(any(User.class))).thenReturn(savedUser);
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.userId", is(3)))
+                .andExpect(jsonPath("$.createdAt", notNullValue()));
+
+        verify(userService, times(1)).createUser(any(User.class));
+    }
+
+    // ==================== UPDATE USER ====================
 
     @Test
     @DisplayName("PUT /api/users/{id} - Should update user when exists")
@@ -159,6 +259,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateData)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId", is(1)))
                 .andExpect(jsonPath("$.username", is("updateduser")))
                 .andExpect(jsonPath("$.email", is("updated@example.com")));
 
@@ -177,7 +278,82 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateData)))
                 .andExpect(status().isNotFound());
+
+        verify(userService, times(1)).updateUser(eq(999L), any(User.class));
     }
+
+    @Test
+    @DisplayName("PUT /api/users/{id} - Should update only username")
+    void updateUser_OnlyUsername_ShouldReturnUpdatedUser() throws Exception {
+        User updateData = new User();
+        updateData.setUsername("newusername");
+
+        User updatedUser = new User();
+        updatedUser.setUserId(1L);
+        updatedUser.setUsername("newusername");
+        updatedUser.setEmail("test@example.com");
+        updatedUser.setDefaultCurrency("USD");
+
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateData)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("newusername")))
+                .andExpect(jsonPath("$.email", is("test@example.com")));
+
+        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
+    }
+
+    @Test
+    @DisplayName("PUT /api/users/{id} - Should update only email")
+    void updateUser_OnlyEmail_ShouldReturnUpdatedUser() throws Exception {
+        User updateData = new User();
+        updateData.setEmail("newemail@example.com");
+
+        User updatedUser = new User();
+        updatedUser.setUserId(1L);
+        updatedUser.setUsername("testuser");
+        updatedUser.setEmail("newemail@example.com");
+        updatedUser.setDefaultCurrency("USD");
+
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateData)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("testuser")))
+                .andExpect(jsonPath("$.email", is("newemail@example.com")));
+
+        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
+    }
+
+    @Test
+    @DisplayName("PUT /api/users/{id} - Should update currency")
+    void updateUser_WithCurrency_ShouldReturnUpdatedUser() throws Exception {
+        User updateData = new User();
+        updateData.setDefaultCurrency("EUR");
+
+        User updatedUser = new User();
+        updatedUser.setUserId(1L);
+        updatedUser.setUsername("testuser");
+        updatedUser.setEmail("test@example.com");
+        updatedUser.setDefaultCurrency("EUR");
+
+        when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
+
+        mockMvc.perform(put("/api/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateData)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.defaultCurrency", is("EUR")));
+
+        verify(userService, times(1)).updateUser(eq(1L), any(User.class));
+    }
+
+    // ==================== DELETE USER ====================
 
     @Test
     @DisplayName("DELETE /api/users/{id} - Should delete user when exists")
@@ -199,5 +375,40 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(userService, times(1)).deleteUser(999L);
+    }
+
+    @Test
+    @DisplayName("DELETE /api/users/{id} - Should delete different user")
+    void deleteUser_WithDifferentId_ShouldReturn204() throws Exception {
+        when(userService.deleteUser(2L)).thenReturn(true);
+
+        mockMvc.perform(delete("/api/users/2"))
+                .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).deleteUser(2L);
+    }
+
+    // ==================== EDGE CASES ====================
+
+    @Test
+    @DisplayName("GET /api/users/{id} - Should handle zero ID")
+    void getUserById_WithZeroId_ShouldReturn404() throws Exception {
+        when(userService.getUserById(0L)).thenReturn(null);
+
+        mockMvc.perform(get("/api/users/0"))
+                .andExpect(status().isNotFound());
+
+        verify(userService, times(1)).getUserById(0L);
+    }
+
+    @Test
+    @DisplayName("DELETE /api/users/{id} - Should handle zero ID")
+    void deleteUser_WithZeroId_ShouldReturn404() throws Exception {
+        when(userService.deleteUser(0L)).thenReturn(false);
+
+        mockMvc.perform(delete("/api/users/0"))
+                .andExpect(status().isNotFound());
+
+        verify(userService, times(1)).deleteUser(0L);
     }
 }
