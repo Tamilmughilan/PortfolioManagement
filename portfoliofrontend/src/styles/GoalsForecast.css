@@ -1,0 +1,129 @@
+@import './Reactbits.css';
+
+.goals-page {
+  width: 100%;
+}
+
+.goals-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.goals-card h2 {
+  margin-bottom: 1rem;
+}
+
+.goals-form,
+.whatif-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.goals-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.goals-field input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+}
+
+.goals-submit {
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.goal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.goal-item.active {
+  border-color: rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.goal-item h4 {
+  margin-bottom: 0.25rem;
+}
+
+.goal-item span {
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+
+.goal-item button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--danger);
+}
+
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.forecast-card p {
+  color: var(--text-light);
+}
+
+.whatif-card {
+  margin-top: 1.5rem;
+}
+
+.whatif-result {
+  margin-top: 1rem;
+  background: var(--bg-light);
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+.whatif-metrics {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .whatif-metrics {
+    flex-direction: column;
+  }
+}

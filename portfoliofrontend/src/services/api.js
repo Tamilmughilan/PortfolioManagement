@@ -43,6 +43,17 @@ export const addTarget = (portfolioId, targetData) => api.post(`/portfolios/${po
 export const updateTarget = (portfolioId, targetId, targetData) => api.put(`/portfolios/${portfolioId}/targets/${targetId}`, targetData);
 export const deleteTarget = (portfolioId, targetId) => api.delete(`/portfolios/${portfolioId}/targets/${targetId}`);
 
+// ==================== GOALS & FORECAST APIs ====================
+export const getGoals = (portfolioId) => api.get(`/portfolios/${portfolioId}/goals`);
+export const addGoal = (portfolioId, payload) => api.post(`/portfolios/${portfolioId}/goals`, payload);
+export const updateGoal = (portfolioId, goalId, payload) => api.put(`/portfolios/${portfolioId}/goals/${goalId}`, payload);
+export const deleteGoal = (portfolioId, goalId) => api.delete(`/portfolios/${portfolioId}/goals/${goalId}`);
+export const getGoalForecast = (portfolioId, goalId) => api.get(`/portfolios/${portfolioId}/goals/${goalId}/forecast`);
+export const runWhatIf = (portfolioId, payload) => api.post(`/portfolios/${portfolioId}/what-if`, payload);
+
+// ==================== MARKET NEWS APIs ====================
+export const getMarketNews = () => api.get('/market/news');
+
 // ==================== SNAPSHOTS APIs ====================
 export const getSnapshots = (portfolioId) => api.get(`/portfolios/${portfolioId}/snapshots`);
 export const recordSnapshot = (portfolioId, snapshotData) => api.post(`/portfolios/${portfolioId}/snapshots`, snapshotData);

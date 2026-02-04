@@ -1,13 +1,19 @@
 package com.example.portfoliobackend.controller;
 
+import com.example.portfoliobackend.dto.GoalForecastDTO;
 import com.example.portfoliobackend.dto.HoldingDTO;
 import com.example.portfoliobackend.dto.PortfolioDTO;
+import com.example.portfoliobackend.dto.PortfolioGoalDTO;
 import com.example.portfoliobackend.dto.PortfolioSnapshotDTO;
 import com.example.portfoliobackend.dto.PortfolioTargetDTO;
+import com.example.portfoliobackend.dto.WhatIfRequestDTO;
+import com.example.portfoliobackend.dto.WhatIfResponseDTO;
 import com.example.portfoliobackend.entity.Holding;
 import com.example.portfoliobackend.entity.Portfolio;
+import com.example.portfoliobackend.entity.PortfolioGoal;
 import com.example.portfoliobackend.entity.PortfolioSnapshot;
 import com.example.portfoliobackend.entity.PortfolioTarget;
+import com.example.portfoliobackend.service.ForecastService;
 import com.example.portfoliobackend.service.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +31,9 @@ public class PortfolioController {
 
     @Autowired
     private PortfolioService portfolioService;
+
+    @Autowired
+    private ForecastService forecastService;
 
     @GetMapping
     public ResponseEntity<List<PortfolioDTO>> getAllPortfolios() {
@@ -162,6 +171,74 @@ public class PortfolioController {
                 .map(PortfolioController::toDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/{portfolioId}/goals")
+    public ResponseEntity<List<PortfolioGoalDTO>> getGoals(@PathVariable Long portfolioId) {
+        if (portfolioService.getPortfolioById(portfolioId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<PortfolioGoalDTO> results = portfolioService.getGoalsByPortfolioId(portfolioId).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/{portfolioId}/goals/{goalId}")
+    public ResponseEntity<PortfolioGoalDTO> getGoal(
+            @PathVariable Long portfolioId,
+            @PathVariable Long goalId
+    ) {
+        PortfolioGoal goal = portfolioService.getGoalById(goalId);
+        if (goal == null || goal.getPortfolioId() == null || !goal.getPortfolioId().equals(portfolioId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(toDTO(goal));
+    }
+
+    @PostMapping("/{portfolioId}/goals")
+    public ResponseEntity<PortfolioGoalDTO> addGoal(
+            @PathVariable Long portfolioId,
+            @RequestBody PortfolioGoalDTO goal
+    ) {
+        if (portfolioService.getPortfolioById(portfolioId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        PortfolioGoal toCreate = toEntity(goal);
+        toCreate.setPortfolioId(portfolioId);
+        PortfolioGoal created = portfolioService.addGoal(toCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(created));
+    }
+
+    @PutMapping("/{portfolioId}/goals/{goalId}")
+    public ResponseEntity<PortfolioGoalDTO> updateGoal(
+            @PathVariable Long portfolioId,
+            @PathVariable Long goalId,
+            @RequestBody PortfolioGoalDTO goal
+    ) {
+        PortfolioGoal existing = portfolioService.getGoalById(goalId);
+        if (existing == null || existing.getPortfolioId() == null || !existing.getPortfolioId().equals(portfolioId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        PortfolioGoal toUpdate = toEntity(goal);
+        toUpdate.setPortfolioId(portfolioId);
+        PortfolioGoal updated = portfolioService.updateGoal(goalId, toUpdate);
+        return ResponseEntity.ok(toDTO(updated));
+    }
+
+    @DeleteMapping("/{portfolioId}/goals/{goalId}")
+    public ResponseEntity<Void> deleteGoal(
+            @PathVariable Long portfolioId,
+            @PathVariable Long goalId
+    ) {
+        PortfolioGoal existing = portfolioService.getGoalById(goalId);
+        if (existing == null || existing.getPortfolioId() == null || !existing.getPortfolioId().equals(portfolioId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        if (!portfolioService.deleteGoal(goalId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{portfolioId}/targets/{targetId}")
@@ -340,6 +417,29 @@ public class PortfolioController {
         return ResponseEntity.ok(drift);
     }
 
+    @GetMapping("/{portfolioId}/goals/{goalId}/forecast")
+    public ResponseEntity<GoalForecastDTO> forecastGoal(
+            @PathVariable Long portfolioId,
+            @PathVariable Long goalId
+    ) {
+        PortfolioGoal goal = portfolioService.getGoalById(goalId);
+        if (goal == null || goal.getPortfolioId() == null || !goal.getPortfolioId().equals(portfolioId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(forecastService.forecastGoal(portfolioId, goal));
+    }
+
+    @PostMapping("/{portfolioId}/what-if")
+    public ResponseEntity<WhatIfResponseDTO> whatIf(
+            @PathVariable Long portfolioId,
+            @RequestBody WhatIfRequestDTO request
+    ) {
+        if (portfolioService.getPortfolioById(portfolioId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(forecastService.runWhatIf(portfolioId, request));
+    }
+
     public static class SnapshotRequest {
         private BigDecimal totalValue;
         private String currency;
@@ -435,5 +535,28 @@ public class PortfolioController {
         snapshot.setCurrency(dto.getCurrency());
         snapshot.setSnapshotDate(dto.getSnapshotDate());
         return snapshot;
+    }
+
+    private static PortfolioGoalDTO toDTO(PortfolioGoal goal) {
+        return new PortfolioGoalDTO(
+                goal.getGoalId(),
+                goal.getPortfolioId(),
+                goal.getGoalName(),
+                goal.getTargetAmount(),
+                goal.getTargetDate(),
+                goal.getExpectedAnnualReturn(),
+                goal.getCreatedAt()
+        );
+    }
+
+    private static PortfolioGoal toEntity(PortfolioGoalDTO dto) {
+        PortfolioGoal goal = new PortfolioGoal();
+        goal.setGoalId(dto.getGoalId());
+        goal.setPortfolioId(dto.getPortfolioId());
+        goal.setGoalName(dto.getGoalName());
+        goal.setTargetAmount(dto.getTargetAmount());
+        goal.setTargetDate(dto.getTargetDate());
+        goal.setExpectedAnnualReturn(dto.getExpectedAnnualReturn());
+        return goal;
     }
 }

@@ -7,6 +7,7 @@ import AddHoldingModal from './components/AddHoldingModal';
 import AuthPage from './pages/AuthPage';
 import PortfolioDriftPage from './pages/PortfolioDriftPage';
 import PortfolioManagerPage from './pages/PortfolioManagerPage';
+import GoalsForecastPage from './pages/GoalsForecastPage';
 import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
@@ -128,6 +129,8 @@ function App() {
         );
       case 'drift':
         return <PortfolioDriftPage key={refreshKey} portfolioId={selectedPortfolio} />;
+      case 'goals':
+        return <GoalsForecastPage key={refreshKey} portfolioId={selectedPortfolio} />;
       default:
         return <Dashboard key={refreshKey} portfolioId={selectedPortfolio} />;
     }
