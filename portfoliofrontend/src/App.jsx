@@ -58,6 +58,22 @@ function App() {
     }
   };
 
+  const handlePortfoliosUpdated = (items, preferredId) => {
+    setPortfolios(items);
+    if (!items || items.length === 0) {
+      setSelectedPortfolio(null);
+      return;
+    }
+    if (preferredId) {
+      setSelectedPortfolio(preferredId);
+      return;
+    }
+    const stillExists = items.some(portfolio => portfolio.portfolioId === selectedPortfolio);
+    if (!stillExists) {
+      setSelectedPortfolio(items[0].portfolioId);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('authUser');
     setCurrentUser(null);
@@ -102,7 +118,7 @@ function App() {
       case 'performance':
         return <AnalyticsPage key={refreshKey} portfolioId={selectedPortfolio} />;
       case 'portfolio':
-        return <PortfolioManagerPage user={currentUser} />;
+        return <PortfolioManagerPage user={currentUser} onPortfoliosUpdated={handlePortfoliosUpdated} />;
       case 'assets':
         return (
           <div className="coming-soon">

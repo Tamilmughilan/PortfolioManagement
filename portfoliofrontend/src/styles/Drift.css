@@ -9,6 +9,30 @@
   margin-bottom: 2rem;
 }
 
+.drift-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.drift-refresh-btn {
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+
+.drift-refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .drift-hero-card h2 {
   font-size: 1.4rem;
   margin-bottom: 0.5rem;
@@ -149,6 +173,11 @@
 }
 
 @media (max-width: 768px) {
+  .drift-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .drift-hero-header {
     flex-direction: column;
     align-items: flex-start;

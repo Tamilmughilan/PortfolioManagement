@@ -1,5 +1,9 @@
 package com.example.portfoliobackend.controller;
 
+import com.example.portfoliobackend.dto.HoldingDTO;
+import com.example.portfoliobackend.dto.PortfolioDTO;
+import com.example.portfoliobackend.dto.PortfolioSnapshotDTO;
+import com.example.portfoliobackend.dto.PortfolioTargetDTO;
 import com.example.portfoliobackend.entity.Holding;
 import com.example.portfoliobackend.entity.Portfolio;
 import com.example.portfoliobackend.entity.PortfolioSnapshot;
@@ -12,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/portfolios")
@@ -22,40 +27,54 @@ public class PortfolioController {
     private PortfolioService portfolioService;
 
     @GetMapping
-    public ResponseEntity<List<Portfolio>> getAllPortfolios() {
-        return ResponseEntity.ok(portfolioService.getAllPortfolios());
+    public ResponseEntity<List<PortfolioDTO>> getAllPortfolios() {
+        List<PortfolioDTO> results = portfolioService.getAllPortfolios().stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Portfolio>> getPortfoliosByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(portfolioService.getPortfoliosByUserId(userId));
+    public ResponseEntity<List<PortfolioDTO>> getPortfoliosByUser(@PathVariable Long userId) {
+        List<PortfolioDTO> results = portfolioService.getPortfoliosByUserId(userId).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{portfolioId}")
-    public ResponseEntity<Portfolio> getPortfolioById(@PathVariable Long portfolioId) {
+    public ResponseEntity<PortfolioDTO> getPortfolioById(@PathVariable Long portfolioId) {
         Portfolio portfolio = portfolioService.getPortfolioById(portfolioId);
         if (portfolio == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(portfolio);
+        return ResponseEntity.ok(toDTO(portfolio));
     }
 
     @PostMapping
-    public ResponseEntity<Portfolio> createPortfolio(@RequestBody Portfolio portfolio) {
-        Portfolio created = portfolioService.createPortfolio(portfolio);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<PortfolioDTO> createPortfolio(@RequestBody PortfolioDTO portfolio) {
+        Portfolio toCreate = new Portfolio();
+        toCreate.setUserId(portfolio.getUserId());
+        toCreate.setPortfolioName(portfolio.getPortfolioName());
+        toCreate.setBaseCurrency(portfolio.getBaseCurrency());
+        Portfolio created = portfolioService.createPortfolio(toCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(created));
     }
 
     @PutMapping("/{portfolioId}")
-    public ResponseEntity<Portfolio> updatePortfolio(
+    public ResponseEntity<PortfolioDTO> updatePortfolio(
             @PathVariable Long portfolioId,
-            @RequestBody Portfolio portfolio
+            @RequestBody PortfolioDTO portfolio
     ) {
-        Portfolio updated = portfolioService.updatePortfolio(portfolioId, portfolio);
+        Portfolio toUpdate = new Portfolio();
+        toUpdate.setUserId(portfolio.getUserId());
+        toUpdate.setPortfolioName(portfolio.getPortfolioName());
+        toUpdate.setBaseCurrency(portfolio.getBaseCurrency());
+        Portfolio updated = portfolioService.updatePortfolio(portfolioId, toUpdate);
         if (updated == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(toDTO(updated));
     }
 
     @DeleteMapping("/{portfolioId}")
@@ -67,15 +86,18 @@ public class PortfolioController {
     }
 
     @GetMapping("/{portfolioId}/holdings")
-    public ResponseEntity<List<Holding>> getHoldings(@PathVariable Long portfolioId) {
+    public ResponseEntity<List<HoldingDTO>> getHoldings(@PathVariable Long portfolioId) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(portfolioService.getHoldingsByPortfolioId(portfolioId));
+        List<HoldingDTO> results = portfolioService.getHoldingsByPortfolioId(portfolioId).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{portfolioId}/holdings/{holdingId}")
-    public ResponseEntity<Holding> getHolding(
+    public ResponseEntity<HoldingDTO> getHolding(
             @PathVariable Long portfolioId,
             @PathVariable Long holdingId
     ) {
@@ -83,35 +105,37 @@ public class PortfolioController {
         if (holding == null || holding.getPortfolioId() == null || !holding.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(holding);
+        return ResponseEntity.ok(toDTO(holding));
     }
 
     @PostMapping("/{portfolioId}/holdings")
-    public ResponseEntity<Holding> addHolding(
+    public ResponseEntity<HoldingDTO> addHolding(
             @PathVariable Long portfolioId,
-            @RequestBody Holding holding
+            @RequestBody HoldingDTO holding
     ) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        holding.setPortfolioId(portfolioId);
-        Holding created = portfolioService.addHolding(holding);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        Holding toCreate = toEntity(holding);
+        toCreate.setPortfolioId(portfolioId);
+        Holding created = portfolioService.addHolding(toCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(created));
     }
 
     @PutMapping("/{portfolioId}/holdings/{holdingId}")
-    public ResponseEntity<Holding> updateHolding(
+    public ResponseEntity<HoldingDTO> updateHolding(
             @PathVariable Long portfolioId,
             @PathVariable Long holdingId,
-            @RequestBody Holding holding
+            @RequestBody HoldingDTO holding
     ) {
         Holding existing = portfolioService.getHoldingById(holdingId);
         if (existing == null || existing.getPortfolioId() == null || !existing.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        holding.setPortfolioId(portfolioId);
-        Holding updated = portfolioService.updateHolding(holdingId, holding);
-        return ResponseEntity.ok(updated);
+        Holding toUpdate = toEntity(holding);
+        toUpdate.setPortfolioId(portfolioId);
+        Holding updated = portfolioService.updateHolding(holdingId, toUpdate);
+        return ResponseEntity.ok(toDTO(updated));
     }
 
     @DeleteMapping("/{portfolioId}/holdings/{holdingId}")
@@ -130,15 +154,18 @@ public class PortfolioController {
     }
 
     @GetMapping("/{portfolioId}/targets")
-    public ResponseEntity<List<PortfolioTarget>> getTargets(@PathVariable Long portfolioId) {
+    public ResponseEntity<List<PortfolioTargetDTO>> getTargets(@PathVariable Long portfolioId) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(portfolioService.getTargetsByPortfolioId(portfolioId));
+        List<PortfolioTargetDTO> results = portfolioService.getTargetsByPortfolioId(portfolioId).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{portfolioId}/targets/{targetId}")
-    public ResponseEntity<PortfolioTarget> getTarget(
+    public ResponseEntity<PortfolioTargetDTO> getTarget(
             @PathVariable Long portfolioId,
             @PathVariable Long targetId
     ) {
@@ -146,35 +173,37 @@ public class PortfolioController {
         if (target == null || target.getPortfolioId() == null || !target.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(target);
+        return ResponseEntity.ok(toDTO(target));
     }
 
     @PostMapping("/{portfolioId}/targets")
-    public ResponseEntity<PortfolioTarget> addTarget(
+    public ResponseEntity<PortfolioTargetDTO> addTarget(
             @PathVariable Long portfolioId,
-            @RequestBody PortfolioTarget target
+            @RequestBody PortfolioTargetDTO target
     ) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        target.setPortfolioId(portfolioId);
-        PortfolioTarget created = portfolioService.addTarget(target);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        PortfolioTarget toCreate = toEntity(target);
+        toCreate.setPortfolioId(portfolioId);
+        PortfolioTarget created = portfolioService.addTarget(toCreate);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(created));
     }
 
     @PutMapping("/{portfolioId}/targets/{targetId}")
-    public ResponseEntity<PortfolioTarget> updateTarget(
+    public ResponseEntity<PortfolioTargetDTO> updateTarget(
             @PathVariable Long portfolioId,
             @PathVariable Long targetId,
-            @RequestBody PortfolioTarget target
+            @RequestBody PortfolioTargetDTO target
     ) {
         PortfolioTarget existing = portfolioService.getTargetById(targetId);
         if (existing == null || existing.getPortfolioId() == null || !existing.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        target.setPortfolioId(portfolioId);
-        PortfolioTarget updated = portfolioService.updateTarget(targetId, target);
-        return ResponseEntity.ok(updated);
+        PortfolioTarget toUpdate = toEntity(target);
+        toUpdate.setPortfolioId(portfolioId);
+        PortfolioTarget updated = portfolioService.updateTarget(targetId, toUpdate);
+        return ResponseEntity.ok(toDTO(updated));
     }
 
     @DeleteMapping("/{portfolioId}/targets/{targetId}")
@@ -193,15 +222,18 @@ public class PortfolioController {
     }
 
     @GetMapping("/{portfolioId}/snapshots")
-    public ResponseEntity<List<PortfolioSnapshot>> getSnapshots(@PathVariable Long portfolioId) {
+    public ResponseEntity<List<PortfolioSnapshotDTO>> getSnapshots(@PathVariable Long portfolioId) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(portfolioService.getSnapshotsByPortfolioId(portfolioId));
+        List<PortfolioSnapshotDTO> results = portfolioService.getSnapshotsByPortfolioId(portfolioId).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{portfolioId}/snapshots/{snapshotId}")
-    public ResponseEntity<PortfolioSnapshot> getSnapshot(
+    public ResponseEntity<PortfolioSnapshotDTO> getSnapshot(
             @PathVariable Long portfolioId,
             @PathVariable Long snapshotId
     ) {
@@ -209,11 +241,11 @@ public class PortfolioController {
         if (snapshot == null || snapshot.getPortfolioId() == null || !snapshot.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(snapshot);
+        return ResponseEntity.ok(toDTO(snapshot));
     }
 
     @PostMapping("/{portfolioId}/snapshots")
-    public ResponseEntity<PortfolioSnapshot> recordSnapshot(
+    public ResponseEntity<PortfolioSnapshotDTO> recordSnapshot(
             @PathVariable Long portfolioId,
             @RequestBody SnapshotRequest request
     ) {
@@ -226,33 +258,37 @@ public class PortfolioController {
         }
         String currency = request != null ? request.getCurrency() : null;
         PortfolioSnapshot snapshot = portfolioService.recordSnapshot(portfolioId, totalValue, currency);
-        return ResponseEntity.status(HttpStatus.CREATED).body(snapshot);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toDTO(snapshot));
     }
 
     @PostMapping("/{portfolioId}/snapshots/refresh")
-    public ResponseEntity<List<PortfolioSnapshot>> refreshSnapshots(
+    public ResponseEntity<List<PortfolioSnapshotDTO>> refreshSnapshots(
             @PathVariable Long portfolioId,
             @RequestParam(value = "currency", required = false) String currency
     ) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(portfolioService.refreshAndGetSnapshots(portfolioId, currency));
+        List<PortfolioSnapshotDTO> results = portfolioService.refreshAndGetSnapshots(portfolioId, currency).stream()
+                .map(PortfolioController::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(results);
     }
 
     @PutMapping("/{portfolioId}/snapshots/{snapshotId}")
-    public ResponseEntity<PortfolioSnapshot> updateSnapshot(
+    public ResponseEntity<PortfolioSnapshotDTO> updateSnapshot(
             @PathVariable Long portfolioId,
             @PathVariable Long snapshotId,
-            @RequestBody PortfolioSnapshot snapshot
+            @RequestBody PortfolioSnapshotDTO snapshot
     ) {
         PortfolioSnapshot existing = portfolioService.getSnapshotById(snapshotId);
         if (existing == null || existing.getPortfolioId() == null || !existing.getPortfolioId().equals(portfolioId)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        snapshot.setPortfolioId(portfolioId);
-        PortfolioSnapshot updated = portfolioService.updateSnapshot(snapshotId, snapshot);
-        return ResponseEntity.ok(updated);
+        PortfolioSnapshot toUpdate = toEntity(snapshot);
+        toUpdate.setPortfolioId(portfolioId);
+        PortfolioSnapshot updated = portfolioService.updateSnapshot(snapshotId, toUpdate);
+        return ResponseEntity.ok(toDTO(updated));
     }
 
     @DeleteMapping("/{portfolioId}/snapshots/{snapshotId}")
@@ -323,5 +359,81 @@ public class PortfolioController {
         public void setCurrency(String currency) {
             this.currency = currency;
         }
+    }
+
+    private static PortfolioDTO toDTO(Portfolio portfolio) {
+        return new PortfolioDTO(
+                portfolio.getPortfolioId(),
+                portfolio.getUserId(),
+                portfolio.getPortfolioName(),
+                portfolio.getBaseCurrency(),
+                portfolio.getCreatedAt()
+        );
+    }
+
+    private static HoldingDTO toDTO(Holding holding) {
+        return new HoldingDTO(
+                holding.getHoldingId(),
+                holding.getPortfolioId(),
+                holding.getAssetName(),
+                holding.getAssetType(),
+                holding.getQuantity(),
+                holding.getPurchasePrice(),
+                holding.getCurrentPrice(),
+                holding.getCurrency(),
+                holding.getPurchaseDate()
+        );
+    }
+
+    private static Holding toEntity(HoldingDTO dto) {
+        Holding holding = new Holding();
+        holding.setHoldingId(dto.getHoldingId());
+        holding.setPortfolioId(dto.getPortfolioId());
+        holding.setAssetName(dto.getAssetName());
+        holding.setAssetType(dto.getAssetType());
+        holding.setQuantity(dto.getQuantity());
+        holding.setPurchasePrice(dto.getPurchasePrice());
+        holding.setCurrentPrice(dto.getCurrentPrice());
+        holding.setCurrency(dto.getCurrency());
+        holding.setPurchaseDate(dto.getPurchaseDate());
+        return holding;
+    }
+
+    private static PortfolioTargetDTO toDTO(PortfolioTarget target) {
+        return new PortfolioTargetDTO(
+                target.getTargetId(),
+                target.getPortfolioId(),
+                target.getAssetType(),
+                target.getTargetPercentage()
+        );
+    }
+
+    private static PortfolioTarget toEntity(PortfolioTargetDTO dto) {
+        PortfolioTarget target = new PortfolioTarget();
+        target.setTargetId(dto.getTargetId());
+        target.setPortfolioId(dto.getPortfolioId());
+        target.setAssetType(dto.getAssetType());
+        target.setTargetPercentage(dto.getTargetPercentage());
+        return target;
+    }
+
+    private static PortfolioSnapshotDTO toDTO(PortfolioSnapshot snapshot) {
+        return new PortfolioSnapshotDTO(
+                snapshot.getSnapshotId(),
+                snapshot.getPortfolioId(),
+                snapshot.getTotalValue(),
+                snapshot.getCurrency(),
+                snapshot.getSnapshotDate()
+        );
+    }
+
+    private static PortfolioSnapshot toEntity(PortfolioSnapshotDTO dto) {
+        PortfolioSnapshot snapshot = new PortfolioSnapshot();
+        snapshot.setSnapshotId(dto.getSnapshotId());
+        snapshot.setPortfolioId(dto.getPortfolioId());
+        snapshot.setTotalValue(dto.getTotalValue());
+        snapshot.setCurrency(dto.getCurrency());
+        snapshot.setSnapshotDate(dto.getSnapshotDate());
+        return snapshot;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.portfoliobackend.controller;
 
+import com.example.portfoliobackend.dto.AnalyticsDTO;
 import com.example.portfoliobackend.service.AnalyticsService;
 import com.example.portfoliobackend.service.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,21 @@ public class AnalyticsController {
     private PortfolioService portfolioService;
 
     @GetMapping("/portfolios/{portfolioId}/summary")
-    public ResponseEntity<AnalyticsSummary> getSummary(@PathVariable Long portfolioId) {
+    public ResponseEntity<AnalyticsDTO> getSummary(@PathVariable Long portfolioId) {
         if (portfolioService.getPortfolioById(portfolioId) == null) {
             return ResponseEntity.notFound().build();
         }
         BigDecimal totalMarketValue = analyticsService.getTotalMarketValue(portfolioId);
         BigDecimal totalCost = analyticsService.getTotalCost(portfolioId);
         BigDecimal totalGainLoss = analyticsService.getTotalGainLoss(portfolioId);
-        return ResponseEntity.ok(new AnalyticsSummary(totalMarketValue, totalCost, totalGainLoss));
+        return ResponseEntity.ok(new AnalyticsDTO(
+                totalMarketValue,
+                totalCost,
+                totalGainLoss,
+                null,
+                null,
+                null
+        ));
     }
 
     @GetMapping("/portfolios/{portfolioId}/allocations")
@@ -55,27 +63,5 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getTargetDriftPercentages(portfolioId));
     }
 
-    public static class AnalyticsSummary {
-        private BigDecimal totalMarketValue;
-        private BigDecimal totalCost;
-        private BigDecimal totalGainLoss;
-
-        public AnalyticsSummary(BigDecimal totalMarketValue, BigDecimal totalCost, BigDecimal totalGainLoss) {
-            this.totalMarketValue = totalMarketValue;
-            this.totalCost = totalCost;
-            this.totalGainLoss = totalGainLoss;
-        }
-
-        public BigDecimal getTotalMarketValue() {
-            return totalMarketValue;
-        }
-
-        public BigDecimal getTotalCost() {
-            return totalCost;
-        }
-
-        public BigDecimal getTotalGainLoss() {
-            return totalGainLoss;
-        }
-    }
+    
 }
