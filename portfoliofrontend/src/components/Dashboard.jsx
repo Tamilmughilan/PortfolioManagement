@@ -174,7 +174,7 @@ const Dashboard = ({ portfolioId }) => {
             ))}
           </div>
         ) : news.length === 0 ? (
-          <div className="empty-holdings">No news available. Add your API key to see headlines.</div>
+          <div className="empty-holdings">No news available right now. Check your API key or retry later.</div>
         ) : news.length <= 3 ? (
           <div className="news-grid">
             {news.map(item => (
