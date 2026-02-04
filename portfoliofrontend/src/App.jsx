@@ -4,7 +4,9 @@ import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AddHoldingModal from './components/AddHoldingModal';
-import AuthPage from './pages/AuthPage';import PortfolioDriftPage from './pages/PortfolioDriftPage';
+import AuthPage from './pages/AuthPage';
+import PortfolioDriftPage from './pages/PortfolioDriftPage';
+import PortfolioManagerPage from './pages/PortfolioManagerPage';
 import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
@@ -85,7 +87,7 @@ function App() {
   }
 
   const renderContent = () => {
-    if (!selectedPortfolio) {
+    if (!selectedPortfolio && activeSection !== 'portfolio') {
       return (
         <div className="no-portfolio">
           <h2>No Portfolio Selected</h2>
@@ -100,13 +102,7 @@ function App() {
       case 'performance':
         return <AnalyticsPage key={refreshKey} portfolioId={selectedPortfolio} />;
       case 'portfolio':
-        return (
-          <div className="coming-soon">
-            <h2>Portfolio Management</h2>
-            <p>Detailed portfolio management features coming soon...</p>
-            <p>Use the "Add Holding" button to add investments</p>
-          </div>
-        );
+        return <PortfolioManagerPage user={currentUser} />;
       case 'assets':
         return (
           <div className="coming-soon">

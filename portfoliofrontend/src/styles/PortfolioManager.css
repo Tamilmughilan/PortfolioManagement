@@ -1,0 +1,112 @@
+@import './Reactbits.css';
+
+.portfolio-manager {
+  width: 100%;
+}
+
+.portfolio-form-card {
+  margin-bottom: 2rem;
+}
+
+.portfolio-form-card h2 {
+  margin-bottom: 1rem;
+}
+
+.portfolio-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.75rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.portfolio-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+.portfolio-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.portfolio-field input,
+.portfolio-field select {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+  color: var(--text-dark);
+}
+
+.portfolio-submit {
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.portfolio-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.portfolio-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.portfolio-item h3 {
+  margin-bottom: 0.4rem;
+}
+
+.portfolio-item p {
+  color: var(--text-light);
+}
+
+.portfolio-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.portfolio-actions button {
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.portfolio-actions button.danger {
+  border-color: rgba(239, 68, 68, 0.4);
+  color: var(--danger);
+}
+
+.portfolio-empty {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+  .portfolio-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

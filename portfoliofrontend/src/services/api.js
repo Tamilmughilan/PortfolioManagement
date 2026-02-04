@@ -25,6 +25,8 @@ export const getPortfolioById = (portfolioId) => api.get(`/portfolios/${portfoli
 export const getPortfolioDashboard = (portfolioId) => api.get(`/portfolios/${portfolioId}/dashboard`);
 export const getPortfolioDriftStory = (portfolioId) => api.get(`/portfolios/${portfolioId}/drift-story`);
 export const createPortfolio = (portfolioData) => api.post('/portfolios', portfolioData);
+export const updatePortfolio = (portfolioId, portfolioData) => api.put(`/portfolios/${portfolioId}`, portfolioData);
+export const deletePortfolio = (portfolioId) => api.delete(`/portfolios/${portfolioId}`);
 export const getTotalValue = (portfolioId) => api.get(`/portfolios/${portfolioId}/total-value`);
 export const getAssetTypes = (portfolioId) => api.get(`/portfolios/${portfolioId}/asset-types`);
 
