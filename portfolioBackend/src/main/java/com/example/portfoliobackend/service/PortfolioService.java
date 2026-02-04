@@ -60,7 +60,7 @@ public class PortfolioService {
     @Transactional
     public Portfolio updatePortfolio(Long portfolioId, Portfolio updated) {
         Optional<Portfolio> existing = portfolioRepository.findById(portfolioId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -105,7 +105,7 @@ public class PortfolioService {
     @Transactional
     public Holding updateHolding(Long holdingId, Holding updated) {
         Optional<Holding> existing = holdingRepository.findById(holdingId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -162,7 +162,7 @@ public class PortfolioService {
     @Transactional
     public PortfolioTarget updateTarget(Long targetId, PortfolioTarget updated) {
         Optional<PortfolioTarget> existing = portfolioTargetRepository.findById(targetId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -199,7 +199,7 @@ public class PortfolioService {
     @Transactional
     public PortfolioSnapshot updateSnapshot(Long snapshotId, PortfolioSnapshot updated) {
         Optional<PortfolioSnapshot> existing = portfolioSnapshotRepository.findById(snapshotId);
-        if (existing.isEmpty()) {
+        if (!existing.isPresent()) {
             return null;
         }
 
@@ -263,5 +263,52 @@ public class PortfolioService {
         recordSnapshot(portfolioId, totalValue, currency);
         List<PortfolioSnapshot> snapshots = getSnapshotsByPortfolioId(portfolioId);
         return snapshots == null ? new ArrayList<>() : snapshots;
+    }
+
+    // New method for dashboard
+    public com.example.portfoliobackend.dto.PortfolioDashboardDTO getPortfolioDashboard(Long portfolioId) {
+        Portfolio portfolio = getPortfolioById(portfolioId);
+        if (portfolio == null) {
+            return null;
+        }
+
+        List<Holding> holdings = getHoldingsByPortfolioId(portfolioId);
+        BigDecimal totalValue = calculateTotalValue(portfolioId);
+
+        List<com.example.portfoliobackend.dto.PortfolioDashboardDTO.HoldingDetailDTO> holdingDTOs = holdings.stream()
+                .map(holding -> {
+                    com.example.portfoliobackend.dto.PortfolioDashboardDTO.HoldingDetailDTO dto =
+                        new com.example.portfoliobackend.dto.PortfolioDashboardDTO.HoldingDetailDTO(
+                            holding.getHoldingId(),
+                            holding.getAssetName(),
+                            holding.getAssetType(),
+                            holding.getQuantity(),
+                            holding.getPurchasePrice(),
+                            holding.getCurrentPrice(),
+                            holding.getCurrency(),
+                            holding.getPurchaseDate()
+                        );
+
+                    // Calculate allocation percentage
+                    if (totalValue.compareTo(BigDecimal.ZERO) > 0 && holding.getQuantity() != null && holding.getCurrentPrice() != null) {
+                        BigDecimal holdingValue = holding.getQuantity().multiply(holding.getCurrentPrice());
+                        BigDecimal allocation = holdingValue.divide(totalValue, 4, java.math.RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                        dto.setAllocation(allocation);
+                    } else {
+                        dto.setAllocation(BigDecimal.ZERO);
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        return new com.example.portfoliobackend.dto.PortfolioDashboardDTO(
+                portfolio.getPortfolioId(),
+                portfolio.getPortfolioName(),
+                portfolio.getBaseCurrency(),
+                totalValue,
+                holdingDTOs,
+                portfolio.getCreatedAt()
+        );
     }
 }
