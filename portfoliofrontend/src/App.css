@@ -13,6 +13,13 @@
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
+  /* Additional variables for components */
+  --bg-color: #ffffff;
+  --text-color: #1C1917;
+  --text-secondary: #78716C;
+  --border-color: #FEE2E2;
+  --hover-bg: #FEF2F2;
+  --input-bg: #ffffff;
 }
 
 [data-theme="dark"] {
@@ -23,6 +30,13 @@
   --border: #44403C;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  /* Additional variables for components in dark theme */
+  --bg-color: #292524;
+  --text-color: #FAFAF9;
+  --text-secondary: #A8A29E;
+  --border-color: #44403C;
+  --hover-bg: #1C1917;
+  --input-bg: #292524;
 }
 
 * {

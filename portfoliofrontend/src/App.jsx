@@ -7,6 +7,8 @@ import AddHoldingModal from './components/AddHoldingModal';
 import AuthPage from './pages/AuthPage';
 import PortfolioDriftPage from './pages/PortfolioDriftPage';
 import PortfolioManagerPage from './pages/PortfolioManagerPage';
+import StoryPage from './pages/StoryPage';
+import Chatbot from './components/Chatbot';
 import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
@@ -112,6 +114,8 @@ function App() {
         );
       case 'drift':
         return <PortfolioDriftPage key={refreshKey} portfolioId={selectedPortfolio} />;
+      case 'story':
+        return <StoryPage key={refreshKey} portfolioId={selectedPortfolio} />;
       default:
         return <Dashboard key={refreshKey} portfolioId={selectedPortfolio} />;
     }
@@ -181,6 +185,8 @@ function App() {
           onSuccess={handleHoldingAdded}
         />
       )}
+
+      <Chatbot />
     </div>
   );
 }

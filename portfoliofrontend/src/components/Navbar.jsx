@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, DollarSign, TrendingUp, TrendingDown, Settings, LogOut, Home, UserCircle2 } from 'lucide-react';
+import { BarChart3, DollarSign, TrendingUp, TrendingDown, Settings, LogOut, Home, UserCircle2, History } from 'lucide-react';
 import '../styles/Navbar.css';
 
 const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
@@ -9,6 +9,7 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
     { id: 'assets', label: 'Assets', icon: DollarSign },
     { id: 'performance', label: 'Performance', icon: TrendingUp },
     { id: 'drift', label: 'Drift Story', icon: TrendingDown },
+    { id: 'story', label: 'Portfolio Story', icon: History },
   ];
 
   return (
