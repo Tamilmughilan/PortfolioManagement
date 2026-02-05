@@ -1,5 +1,6 @@
 package com.example.portfoliobackend.service;
 
+import com.example.portfoliobackend.dto.ChatMessageDTO;
 import com.example.portfoliobackend.dto.ChatRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -25,6 +26,11 @@ public class ChatService {
     private static final String REPLICATE_MODEL_URL = "https://api.replicate.com/v1/models/%s/predictions";
     private static final int MAX_POLL_ATTEMPTS = 20;
     private static final long POLL_DELAY_MS = 1000;
+    private static final String DEFAULT_MODEL = "a16z-infra/llama7b-v2-chat";
+    private static final double DEFAULT_TEMPERATURE = 0.6;
+    private static final double DEFAULT_TOP_P = 0.9;
+    private static final int DEFAULT_MAX_LENGTH = 180;
+    private static final double DEFAULT_REPETITION_PENALTY = 1.0;
 
     @Autowired
     private PortfolioService portfolioService;
@@ -33,11 +39,10 @@ public class ChatService {
         String token = getEnvValue("REPLICATE_API_TOKEN");
         String version = getEnvValue("REPLICATE_MODEL_VERSION");
         String model = getEnvValue("REPLICATE_MODEL");
+        String effectiveModel = (model != null && !model.isBlank()) ? model : DEFAULT_MODEL;
+        String effectiveVersion = version;
         if (token == null || token.isBlank()) {
             return "Replicate API token is missing. Add REPLICATE_API_TOKEN to your .env file.";
-        }
-        if ((version == null || version.isBlank()) && (model == null || model.isBlank())) {
-            return "Replicate model is missing. Add REPLICATE_MODEL (e.g., meta/llama-2-7b-chat) or REPLICATE_MODEL_VERSION to your .env file.";
         }
         String userMessage = request.getMessage() == null ? "" : request.getMessage().trim();
         if (userMessage.isEmpty()) {
@@ -45,22 +50,19 @@ public class ChatService {
         }
 
         String context = buildContext(request.getPortfolioId());
-        String prompt = "You are a friendly financial education assistant. "
-                + "Provide general market education, concepts, and high-level guidance. "
-                + "Do NOT provide personalized financial advice or specific buy/sell instructions. "
-                + "If asked for recommendations, include a brief disclaimer and suggest consulting a qualified advisor. "
-                + "Keep answers concise, practical, and user-friendly. "
-                + context
-                + "\nUser question: " + userMessage;
+        String prompt = buildConversationPrompt(request.getHistory(), userMessage, context);
 
         Map<String, Object> payload = new HashMap<>();
-        if (version != null && !version.isBlank()) {
-            payload.put("version", version);
+        if (effectiveVersion != null && !effectiveVersion.isBlank()) {
+            payload.put("version", effectiveVersion);
         }
         Map<String, Object> input = new HashMap<>();
         input.put("prompt", prompt);
-        input.put("max_new_tokens", 256);
-        input.put("temperature", 0.6);
+        // Constant settings for simplicity
+        input.put("temperature", DEFAULT_TEMPERATURE);
+        input.put("top_p", DEFAULT_TOP_P);
+        input.put("max_length", DEFAULT_MAX_LENGTH);
+        input.put("repetition_penalty", DEFAULT_REPETITION_PENALTY);
         payload.put("input", input);
 
         HttpHeaders headers = new HttpHeaders();
@@ -69,15 +71,82 @@ public class ChatService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = (version != null && !version.isBlank())
+        String url = (effectiveVersion != null && !effectiveVersion.isBlank())
                 ? REPLICATE_URL
-                : String.format(REPLICATE_MODEL_URL, model);
+                : String.format(REPLICATE_MODEL_URL, effectiveModel);
         try {
             Map<String, Object> response = restTemplate.postForObject(url, entity, Map.class);
             return pollReplicateResponse(restTemplate, headers, response);
         } catch (Exception ex) {
             return "Chat service error. Please verify your Replicate token and model version.";
         }
+    }
+
+    private String buildConversationPrompt(List<ChatMessageDTO> history, String userMessage, String context) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("You are a friendly financial education assistant.\n")
+                .append("Provide general market education, concepts, and high-level guidance.\n")
+                .append("Do NOT provide personalized financial advice or specific buy/sell instructions.\n")
+                .append("If asked for recommendations, include a brief disclaimer and suggest consulting a qualified advisor.\n")
+                .append("Keep answers concise, practical, and user-friendly.\n");
+        if (context != null && !context.isBlank()) {
+            sb.append(context).append("\n");
+        }
+        sb.append("\nConversation:\n");
+        if (history != null) {
+            for (ChatMessageDTO msg : history) {
+                if (msg == null || msg.getContent() == null) continue;
+                String role = msg.getRole() == null ? "" : msg.getRole().trim().toLowerCase();
+                if ("user".equals(role)) {
+                    sb.append("User: ").append(msg.getContent()).append("\n");
+                } else if ("assistant".equals(role) || "model".equals(role)) {
+                    sb.append("Assistant: ").append(msg.getContent()).append("\n");
+                }
+            }
+        }
+        sb.append("User: ").append(userMessage).append("\nAssistant:");
+        return sb.toString();
+    }
+
+    private double clampDouble(Double value, double min, double max, double def) {
+        if (value == null) return def;
+        double v = value;
+        if (v < min) return min;
+        if (v > max) return max;
+        return v;
+    }
+
+    private int clampInt(Integer value, int min, int max, int def) {
+        if (value == null) return def;
+        int v = value;
+        if (v < min) return min;
+        if (v > max) return max;
+        return v;
+    }
+
+    private static class ParsedModel {
+        String model;
+        String version;
+
+        ParsedModel(String model, String version) {
+            this.model = model;
+            this.version = version;
+        }
+    }
+
+    private ParsedModel parseModel(String modelOrModelAndVersion) {
+        if (modelOrModelAndVersion == null) return new ParsedModel(null, null);
+        String trimmed = modelOrModelAndVersion.trim();
+        if (trimmed.isEmpty()) return new ParsedModel(null, null);
+        if (trimmed.contains(":")) {
+            String[] parts = trimmed.split(":", 2);
+            String m = parts[0].trim();
+            String v = parts[1].trim();
+            if (m.isEmpty()) m = null;
+            if (v.isEmpty()) v = null;
+            return new ParsedModel(m, v);
+        }
+        return new ParsedModel(trimmed, null);
     }
 
     private String buildContext(Long portfolioId) {
