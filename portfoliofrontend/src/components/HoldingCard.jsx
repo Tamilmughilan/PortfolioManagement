@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import '../styles/HoldingCard.css';
+import { formatWithSymbol } from '../utils/currency';
 
 const HoldingCard = ({ holding, currency }) => {
   const isPositive = holding.gainLoss >= 0;
@@ -25,28 +26,28 @@ const HoldingCard = ({ holding, currency }) => {
         </div>
         <div className="holding-stat">
           <span className="label">Entry Price</span>
-          <span className="value">{currency} {holding.purchasePrice.toFixed(2)}</span>
+          <span className="value">{formatWithSymbol(currency, holding.purchasePrice)}</span>
         </div>
         <div className="holding-stat">
           <span className="label">Current Price</span>
-          <span className="value">{currency} {holding.currentPrice.toFixed(2)}</span>
+          <span className="value">{formatWithSymbol(currency, holding.currentPrice)}</span>
         </div>
       </div>
 
       <div className="holding-footer">
         <div>
           <span className="label">Invested</span>
-          <span className="value">{currency} {holding.totalInvested?.toFixed(2)}</span>
+          <span className="value">{formatWithSymbol(currency, holding.totalInvested)}</span>
         </div>
         <div>
           <span className="label">Current Value</span>
-          <span className="value">{currency} {holding.currentValue?.toFixed(2)}</span>
+          <span className="value">{formatWithSymbol(currency, holding.currentValue)}</span>
         </div>
       </div>
 
       <div className={`holding-gain-loss ${isPositive ? 'positive' : 'negative'}`}>
         <span className="label">Gain / Loss</span>
-        <span className="value">{isPositive ? '+' : ''}{currency} {holding.gainLoss?.toFixed(2)}</span>
+        <span className="value">{isPositive ? '+' : ''}{formatWithSymbol(currency, holding.gainLoss)}</span>
       </div>
 
       <div className="holding-date">

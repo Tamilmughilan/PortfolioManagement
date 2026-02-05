@@ -6,6 +6,7 @@ import StatCard from '../components/reactbits/StatCard';
 import GlowCard from '../components/reactbits/GlowCard';
 import SkeletonCard from '../components/reactbits/SkeletonCard';
 import '../styles/Drift.css';
+import { formatWithSymbol } from '../utils/currency';
 
 const PortfolioDriftPage = ({ portfolioId }) => {
   const [drift, setDrift] = useState(null);
@@ -125,19 +126,19 @@ const PortfolioDriftPage = ({ portfolioId }) => {
       <div className="drift-stats">
         <StatCard
           label="Initial Value"
-          value={`${currency} ${Number(drift.initialValue || 0).toFixed(2)}`}
+          value={formatWithSymbol(currency, Number(drift.initialValue || 0))}
           subtext="Where your story started"
           icon={<TrendingUp size={18} />}
         />
         <StatCard
           label="Latest Value"
-          value={`${currency} ${Number(drift.latestValue || 0).toFixed(2)}`}
+          value={formatWithSymbol(currency, Number(drift.latestValue || 0))}
           subtext="Where you are now"
           icon={<TrendingUp size={18} />}
         />
         <StatCard
           label="Total Drift"
-          value={`${currency} ${Number(Math.abs(driftValue)).toFixed(2)}`}
+          value={formatWithSymbol(currency, Number(Math.abs(driftValue)).toFixed(2))}
           subtext={`${isPositive ? '+' : '-'}${Number(Math.abs(driftPercent)).toFixed(2)}% from start`}
           icon={isPositive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
           trend={isPositive ? 'positive' : 'negative'}
@@ -160,7 +161,7 @@ const PortfolioDriftPage = ({ portfolioId }) => {
                   </div>
                   <p className="drift-entry-story">{entry.story}</p>
                   <div className="drift-entry-metrics">
-                    <span>{currency} {Number(entry.totalValue || 0).toFixed(2)}</span>
+                    <span>{formatWithSymbol(currency, Number(entry.totalValue || 0))}</span>
                     <span className={entryPositive ? 'positive' : 'negative'}>
                       {entryPositive ? '+' : '-'}{Number(Math.abs(entryPercent)).toFixed(2)}%
                     </span>

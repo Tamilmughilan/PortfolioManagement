@@ -9,10 +9,11 @@
 }
 
 .snapshots-error {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--bg-white);
+  color: var(--text-dark);
   padding: 0.75rem 1rem;
-  border-radius: 10px;
+  border: 1px solid var(--primary);
+  border-radius: 0;
   margin-bottom: 1rem;
 }
 
@@ -33,17 +34,17 @@
 .snapshots-field input {
   width: 100%;
   padding: 0.7rem 0.85rem;
-  border-radius: 10px;
+  border-radius: 0;
   border: 1px solid var(--border);
   background: var(--bg-white);
 }
 
 .snapshots-submit {
-  border: none;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: #fff;
+  border: 1px solid var(--primary);
+  background: var(--bg-white);
+  color: var(--text-dark);
   padding: 0.75rem 1rem;
-  border-radius: 10px;
+  border-radius: 0;
   font-weight: 600;
   cursor: pointer;
 }
@@ -67,7 +68,7 @@
   border: 1px solid var(--border);
   background: var(--bg-white);
   padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

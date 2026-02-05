@@ -9,6 +9,7 @@ import {
 import SectionHeader from '../components/reactbits/SectionHeader';
 import GlowCard from '../components/reactbits/GlowCard';
 import '../styles/PortfolioManager.css';
+import { getCurrencySymbol } from '../utils/currency';
 
 const PortfolioManagerPage = ({ user, onPortfoliosUpdated }) => {
   const [portfolios, setPortfolios] = useState([]);
@@ -149,7 +150,7 @@ const PortfolioManagerPage = ({ user, onPortfoliosUpdated }) => {
             <GlowCard key={portfolio.portfolioId} className="portfolio-item">
               <div>
                 <h3>{portfolio.portfolioName}</h3>
-                <p>{portfolio.baseCurrency} • Created {new Date(portfolio.createdAt).toLocaleDateString()}</p>
+                <p>{getCurrencySymbol(portfolio.baseCurrency)} • Created {new Date(portfolio.createdAt).toLocaleDateString()}</p>
               </div>
               <div className="portfolio-actions">
                 <button type="button" onClick={() => startEdit(portfolio)}>

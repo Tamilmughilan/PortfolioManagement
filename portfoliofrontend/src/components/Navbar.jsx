@@ -19,7 +19,7 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
       <div className="navbar-header">
         <div className="navbar-logo">
           <BarChart3 size={24} />
-          <span>Portfolio</span>
+          <span>WaelthTrack</span>
         </div>
       </div>
 
@@ -39,7 +39,7 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
         {navItems.map(item => (
           <li key={item.id}>
             <button
-              className={`nav-item ${activeSection === item.id ? 'active' : ''}`}
+              className={`nav-item ${activeSection === item.id ? 'active btn-selected' : ''}`}
               onClick={() => onSectionChange(item.id)}
             >
               <item.icon size={20} />
