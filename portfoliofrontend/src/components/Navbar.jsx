@@ -19,7 +19,7 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
       <div className="navbar-header">
         <div className="navbar-logo">
           <BarChart3 size={24} />
-          <span>Portfolio</span>
+          <span>Portfolio Management</span>
         </div>
       </div>
 
