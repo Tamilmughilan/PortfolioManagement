@@ -55,6 +55,13 @@ export const runWhatIf = (portfolioId, payload) => api.post(`/portfolios/${portf
 // ==================== MARKET NEWS APIs ====================
 export const getMarketNews = () => api.get('/market/news');
 
+// ==================== CHAT APIs ====================
+export const sendChat = (payload) => api.post('/chat', payload);
+
+// ==================== ML-lite Forecast ====================
+export const getTrendForecast = (portfolioId, months = 6) =>
+  api.get(`/portfolios/${portfolioId}/forecast-trend?months=${months}`);
+
 // ==================== SNAPSHOTS APIs ====================
 export const getSnapshots = (portfolioId) => api.get(`/portfolios/${portfolioId}/snapshots`);
 export const recordSnapshot = (portfolioId, snapshotData) => api.post(`/portfolios/${portfolioId}/snapshots`, snapshotData);
