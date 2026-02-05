@@ -3,32 +3,36 @@
   --primary-dark: #B91C1C;
   --secondary: #E11D48;
   --accent: #F97316;
-  --bg-light: #FEF2F2;
+  /* Use pure white background for a red & white theme */
+  --bg-light: #ffffff;
   --bg-white: #ffffff;
-  --text-dark: #1C1917;
-  --text-light: #78716C;
-  --border: #FEE2E2;
-  --shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.08), 0 2px 4px -1px rgba(220, 38, 38, 0.04);
-  --shadow-lg: 0 20px 40px -12px rgba(220, 38, 38, 0.15);
+  /* Make primary text use the deep red for a red/white look */
+  --text-dark: #B91C1C;
+  --text-light: #8B1A1A;
+  --border: rgba(220, 38, 38, 0.08);
+  --shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.06), 0 2px 4px -1px rgba(220, 38, 38, 0.03);
+  --shadow-lg: 0 20px 40px -12px rgba(220, 38, 38, 0.12);
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
 }
 
 [data-theme="dark"] {
-  --bg-light: #1C1917;
-  --bg-white: #292524;
-  --text-dark: #FAFAF9;
-  --text-light: #A8A29E;
-  --border: #44403C;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  --bg-light: #111111;
+  --bg-white: #1c1c1c;
+  --text-dark: #FFD6D6; /* light pinkish text on dark theme */
+  --text-light: #FFBABA;
+  --border: #2b0f0f;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
 }
 
+/* Remove rounded corners globally to satisfy "no rounded corners" requirement */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border-radius: 0 !important;
 }
 
 body {
@@ -124,7 +128,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  /* removed radius via global rule */
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -139,14 +143,14 @@ body {
 }
 
 .action-btn.add-btn {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
   color: white;
   border: none;
 }
 
 .action-btn.add-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
 }
 
 .action-btn.refresh-btn {
@@ -171,7 +175,7 @@ body {
   background: var(--bg-light);
   border: 1px solid var(--border);
   padding: 0.5rem;
-  border-radius: 8px;
+  /* no radius */
   cursor: pointer;
   transition: all 0.2s ease;
   color: var(--text-dark);
@@ -236,7 +240,7 @@ body {
   justify-content: center;
   padding: 4rem 2rem;
   background: var(--bg-white);
-  border-radius: 16px;
+  /* removed radius via global rule */
   text-align: center;
   box-shadow: var(--shadow);
 }
