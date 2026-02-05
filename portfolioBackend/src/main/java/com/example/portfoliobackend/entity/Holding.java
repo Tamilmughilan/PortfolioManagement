@@ -39,6 +39,9 @@ public class Holding {
     @Column(length = 3)
     private String currency = "INR";
 
+    @Column(name = "target_value", precision = 15, scale = 2)
+    private BigDecimal targetValue;
+
     public Long getHoldingId() {
         return holdingId;
     }
@@ -121,4 +124,12 @@ public class Holding {
 
     @Column(name = "purchase_date", nullable = false)
     private LocalDate purchaseDate;
+
+    public BigDecimal getTargetValue() {
+        return targetValue;
+    }
+
+    public void setTargetValue(BigDecimal targetValue) {
+        this.targetValue = targetValue;
+    }
 }

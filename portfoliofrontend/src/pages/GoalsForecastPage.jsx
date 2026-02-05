@@ -227,7 +227,50 @@ const GoalsForecastPage = ({ portfolioId }) => {
 
       {forecast && (
         <GlowCard className="forecast-card">
-          <h2>Forecast Story</h2>
+          <h2>Forecast Trajectory</h2>
+          {forecast.trajectory && forecast.trajectory.length > 0 && (
+            <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px', marginBottom: '1rem' }}>
+              <svg viewBox="0 0 600 250" style={{ width: '100%', height: '250px' }}>
+                {(() => {
+                  const trajectory = forecast.trajectory || [];
+                  if (trajectory.length === 0) return null;
+                  
+                  const values = trajectory.map(p => Number(p.value || 0));
+                  const minValue = Math.min(...values, Number(forecast.currentValue || 0), Number(forecast.targetAmount || 0));
+                  const maxValue = Math.max(...values, Number(forecast.currentValue || 0), Number(forecast.targetAmount || 0));
+                  const range = maxValue - minValue || 1;
+                  const padding = 40;
+                  const width = 600 - (padding * 2);
+                  const height = 250 - (padding * 2);
+                  
+                  const points = trajectory.map((point, index) => {
+                    const x = padding + (index / Math.max(trajectory.length - 1, 1)) * width;
+                    const y = padding + height - ((Number(point.value || 0) - minValue) / range) * height;
+                    return { x, y, value: Number(point.value || 0), date: point.date };
+                  });
+                  
+                  const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+                  const targetY = padding + height - ((Number(forecast.targetAmount || 0) - minValue) / range) * height;
+                  
+                  return (
+                    <>
+                      <line x1={padding} y1={padding} x2={padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                      <line x1={padding} y1={padding + height} x2={width + padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                      <line x1={padding} y1={targetY} x2={width + padding} y2={targetY} stroke="#10b981" strokeWidth="2" strokeDasharray="5,5" opacity="0.6" />
+                      <text x={width + padding + 5} y={targetY + 4} fontSize="10" fill="#10b981">Target</text>
+                      <path d={pathData} fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" />
+                      {points.map((point, index) => (
+                        <circle key={index} cx={point.x} cy={point.y} r="3" fill="#3b82f6" />
+                      ))}
+                      <text x={padding + width / 2} y={height + padding + 25} textAnchor="middle" fontSize="11" fill="var(--text-light)">Timeline</text>
+                      <text x="15" y={padding + height / 2} textAnchor="middle" fontSize="11" fill="var(--text-light)" transform={`rotate(-90 15 ${padding + height / 2})`}>Value</text>
+                    </>
+                  );
+                })()}
+              </svg>
+            </div>
+          )}
+          <h3>Forecast Story</h3>
           <p>{forecast.narrative}</p>
         </GlowCard>
       )}
@@ -268,6 +311,45 @@ const GoalsForecastPage = ({ portfolioId }) => {
         </form>
         {whatIfResult && (
           <div className="whatif-result">
+            {whatIfResult.trajectory && whatIfResult.trajectory.length > 0 && (
+              <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px', marginBottom: '1rem' }}>
+                <h3 style={{ marginBottom: '0.5rem' }}>Simulation Trajectory</h3>
+                <svg viewBox="0 0 600 200" style={{ width: '100%', height: '200px' }}>
+                  {(() => {
+                    const trajectory = whatIfResult.trajectory || [];
+                    if (trajectory.length === 0) return null;
+                    
+                    const values = trajectory.map(p => Number(p.value || 0));
+                    const minValue = Math.min(...values, Number(whatIfResult.currentValue || 0));
+                    const maxValue = Math.max(...values, Number(whatIfResult.currentValue || 0));
+                    const range = maxValue - minValue || 1;
+                    const padding = 40;
+                    const width = 600 - (padding * 2);
+                    const height = 200 - (padding * 2);
+                    
+                    const points = trajectory.map((point, index) => {
+                      const x = padding + (index / Math.max(trajectory.length - 1, 1)) * width;
+                      const y = padding + height - ((Number(point.value || 0) - minValue) / range) * height;
+                      return { x, y, value: Number(point.value || 0), date: point.date };
+                    });
+                    
+                    const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+                    
+                    return (
+                      <>
+                        <line x1={padding} y1={padding} x2={padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                        <line x1={padding} y1={padding + height} x2={width + padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                        <path d={pathData} fill="none" stroke="#8b5cf6" strokeWidth="3" strokeLinecap="round" />
+                        {points.map((point, index) => (
+                          <circle key={index} cx={point.x} cy={point.y} r="3" fill="#8b5cf6" />
+                        ))}
+                        <text x={padding + width / 2} y={height + padding + 20} textAnchor="middle" fontSize="10" fill="var(--text-light)">Months</text>
+                      </>
+                    );
+                  })()}
+                </svg>
+              </div>
+            )}
             <p>{whatIfResult.narrative}</p>
             <div className="whatif-metrics">
               <span>Projected Value: {whatIfResult.projectedValue?.toFixed(2)}</span>

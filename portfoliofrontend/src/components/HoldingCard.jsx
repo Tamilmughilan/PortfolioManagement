@@ -79,6 +79,26 @@ const HoldingCard = ({ holding, currency }) => {
         <span className="value">{isPositive ? '+' : ''}{formatWithSymbol(displayCurrency, holding.gainLoss)}</span>
       </div>
 
+      {holding.targetValue != null && (
+        <div className="holding-target">
+          <div className="holding-stat">
+            <span className="label">Target Value</span>
+            <span className="value">{formatWithSymbol(displayCurrency, holding.targetValue)}</span>
+          </div>
+          {holding.valueDrift != null && (
+            <div className={`holding-stat ${holding.valueDrift >= 0 ? 'positive' : 'negative'}`}>
+              <span className="label">Drift from Target</span>
+              <span className="value">
+                {holding.valueDrift >= 0 ? '+' : ''}{formatWithSymbol(displayCurrency, holding.valueDrift)}
+                {holding.valueDriftPercentage != null && (
+                  <span> ({holding.valueDriftPercentage >= 0 ? '+' : ''}{Number(holding.valueDriftPercentage).toFixed(2)}%)</span>
+                )}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="holding-date">
         <small>Purchased on {new Date(holding.purchaseDate).toLocaleDateString()}</small>
       </div>

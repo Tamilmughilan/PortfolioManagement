@@ -51,6 +51,7 @@ CREATE TABLE holdings (
     current_price DECIMAL(15,2) NOT NULL,
     currency VARCHAR(3) DEFAULT 'INR',
     purchase_date DATE NOT NULL,
+    target_value DECIMAL(15,2),
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(portfolio_id)
 );
 

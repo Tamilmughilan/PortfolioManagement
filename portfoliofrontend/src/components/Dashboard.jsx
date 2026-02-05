@@ -149,6 +149,50 @@ const Dashboard = ({ portfolioId }) => {
 
       <GlowCard className="allocation-section">
         <h2>Asset Allocation</h2>
+        {holdings.length > 0 && (
+          <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px', marginBottom: '1rem' }}>
+            <svg viewBox="0 0 200 200" style={{ width: '200px', height: '200px', margin: '0 auto', display: 'block' }}>
+              {(() => {
+                const totalAllocation = holdings.reduce((sum, h) => sum + (h.allocation || 0), 0);
+                if (totalAllocation === 0) return null;
+                
+                let currentAngle = -90;
+                const colors = ['#DC2626', '#E11D48', '#F97316', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899'];
+                
+                return holdings
+                  .filter(h => (h.allocation || 0) > 0)
+                  .map((holding, index) => {
+                    const percent = (holding.allocation || 0) / totalAllocation;
+                    const angle = percent * 360;
+                    const startAngle = currentAngle;
+                    const endAngle = currentAngle + angle;
+                    
+                    const x1 = 100 + 70 * Math.cos((startAngle * Math.PI) / 180);
+                    const y1 = 100 + 70 * Math.sin((startAngle * Math.PI) / 180);
+                    const x2 = 100 + 70 * Math.cos((endAngle * Math.PI) / 180);
+                    const y2 = 100 + 70 * Math.sin((endAngle * Math.PI) / 180);
+                    const largeArc = angle > 180 ? 1 : 0;
+                    
+                    currentAngle += angle;
+                    
+                    return (
+                      <path
+                        key={holding.holdingId}
+                        d={`M 100 100 L ${x1} ${y1} A 70 70 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                        fill={colors[index % colors.length]}
+                        opacity="0.8"
+                      />
+                    );
+                  });
+              })()}
+              <circle cx="100" cy="100" r="50" fill="var(--bg-white)" />
+              <text x="100" y="95" textAnchor="middle" fontSize="16" fontWeight="600" fill="var(--text-dark)">
+                {holdings.reduce((sum, h) => sum + (h.allocation || 0), 0).toFixed(0)}%
+              </text>
+              <text x="100" y="110" textAnchor="middle" fontSize="11" fill="var(--text-light)">Allocated</text>
+            </svg>
+          </div>
+        )}
         <div className="allocation-chart">
           {holdings.map(holding => (
             <div key={holding.holdingId} className="allocation-item">

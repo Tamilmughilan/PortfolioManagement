@@ -265,7 +265,41 @@ const AnalyticsPage = ({ portfolioId }) => {
               <p>Set allocation targets to see drift analysis</p>
             </div>
           ) : (
-            <div className="drift-list">
+            <>
+              <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px', marginBottom: '1rem' }}>
+                <svg viewBox="0 0 400 200" style={{ width: '100%', height: '200px' }}>
+                  {(() => {
+                    const maxPercent = Math.max(...driftEntries.map(([, drift]) => Math.abs(drift)), ...targets.map(t => t.targetPercentage), 100);
+                    const barHeight = 160;
+                    const barWidth = 300;
+                    const barSpacing = barHeight / driftEntries.length;
+                    
+                    return driftEntries.map(([type, driftValue], index) => {
+                      const target = targets.find(t => t.assetType === type);
+                      const actualPercent = allocations[type] || 0;
+                      const targetPercent = target?.targetPercentage || 0;
+                      const xStart = 50;
+                      const yPos = 20 + index * barSpacing;
+                      const targetX = xStart + (targetPercent / maxPercent) * barWidth;
+                      const actualX = xStart + (actualPercent / maxPercent) * barWidth;
+                      
+                      return (
+                        <g key={type}>
+                          <text x="5" y={yPos + 5} fontSize="10" fill="var(--text-dark)">{type.substring(0, 8)}</text>
+                          <line x1={xStart} y1={yPos} x2={xStart + barWidth} y2={yPos} stroke="var(--border)" strokeWidth="1" />
+                          <rect x={targetX - 2} y={yPos - 6} width="4" height="12" fill="#10b981" opacity="0.6" />
+                          <rect x={xStart} y={yPos - 4} width={actualX - xStart} height="8" fill={driftValue >= 0 ? '#ef4444' : '#3b82f6'} opacity="0.7" />
+                          <text x={xStart + barWidth + 5} y={yPos + 3} fontSize="9" fill="var(--text-light)">
+                            {actualPercent.toFixed(1)}% / {targetPercent.toFixed(1)}%
+                          </text>
+                        </g>
+                      );
+                    });
+                  })()}
+                  <text x="200" y="195" textAnchor="middle" fontSize="10" fill="var(--text-light)">Target (green) vs Actual (bars)</text>
+                </svg>
+              </div>
+              <div className="drift-list">
               {driftEntries.map(([type, driftValue]) => {
                 const target = targets.find(t => t.assetType === type);
                 const actualPercent = allocations[type] || 0;
@@ -322,6 +356,7 @@ const AnalyticsPage = ({ portfolioId }) => {
                 );
               })}
             </div>
+            </>
           )}
         </GlowCard>
       </div>
@@ -375,4 +410,3 @@ const AnalyticsPage = ({ portfolioId }) => {
 };
 
 export default AnalyticsPage;
-

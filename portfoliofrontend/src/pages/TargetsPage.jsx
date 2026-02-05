@@ -130,7 +130,66 @@ const TargetsPage = ({ portfolioId }) => {
       ) : targets.length === 0 ? (
         <GlowCard className="targets-empty">No targets yet.</GlowCard>
       ) : (
-        <div className="targets-grid">
+        <>
+          {targets.length > 0 && (
+            <GlowCard className="targets-chart-card" style={{ marginBottom: '1.5rem' }}>
+              <h3>Target Allocation Distribution</h3>
+              <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px' }}>
+                <svg viewBox="0 0 200 200" style={{ width: '200px', height: '200px', margin: '0 auto', display: 'block' }}>
+                  {(() => {
+                    const totalTarget = targets.reduce((sum, t) => sum + (t.targetPercentage || 0), 0);
+                    if (totalTarget === 0) return null;
+                    
+                    let currentAngle = -90;
+                    const colors = ['#DC2626', '#E11D48', '#F97316', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899'];
+                    
+                    return targets
+                      .filter(t => (t.targetPercentage || 0) > 0)
+                      .map((target, index) => {
+                        const percent = (target.targetPercentage || 0) / totalTarget;
+                        const angle = percent * 360;
+                        const startAngle = currentAngle;
+                        const endAngle = currentAngle + angle;
+                        
+                        const x1 = 100 + 70 * Math.cos((startAngle * Math.PI) / 180);
+                        const y1 = 100 + 70 * Math.sin((startAngle * Math.PI) / 180);
+                        const x2 = 100 + 70 * Math.cos((endAngle * Math.PI) / 180);
+                        const y2 = 100 + 70 * Math.sin((endAngle * Math.PI) / 180);
+                        const largeArc = angle > 180 ? 1 : 0;
+                        
+                        currentAngle += angle;
+                        
+                        return (
+                          <path
+                            key={target.targetId}
+                            d={`M 100 100 L ${x1} ${y1} A 70 70 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                            fill={colors[index % colors.length]}
+                            opacity="0.8"
+                          />
+                        );
+                      });
+                  })()}
+                  <circle cx="100" cy="100" r="50" fill="var(--bg-white)" />
+                  <text x="100" y="95" textAnchor="middle" fontSize="16" fontWeight="600" fill="var(--text-dark)">
+                    {targets.reduce((sum, t) => sum + (t.targetPercentage || 0), 0).toFixed(0)}%
+                  </text>
+                  <text x="100" y="110" textAnchor="middle" fontSize="11" fill="var(--text-light)">Total</text>
+                </svg>
+                <div style={{ marginTop: '1rem', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem' }}>
+                  {targets.map((target, index) => {
+                    const colors = ['#DC2626', '#E11D48', '#F97316', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899'];
+                    return (
+                      <div key={target.targetId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '12px', height: '12px', backgroundColor: colors[index % colors.length], borderRadius: '2px' }}></div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-dark)' }}>{target.assetType}: {target.targetPercentage}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </GlowCard>
+          )}
+          <div className="targets-grid">
           {targets.map(target => (
             <GlowCard key={target.targetId} className="targets-card">
               {editingId === target.targetId ? (
@@ -174,6 +233,7 @@ const TargetsPage = ({ portfolioId }) => {
             </GlowCard>
           ))}
         </div>
+        </>
       )}
     </div>
   );

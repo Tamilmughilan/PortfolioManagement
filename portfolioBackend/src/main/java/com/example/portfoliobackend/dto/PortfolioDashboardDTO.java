@@ -59,6 +59,9 @@ public class PortfolioDashboardDTO {
         private BigDecimal gainLoss;
         private BigDecimal gainLossPercentage;
         private BigDecimal allocation;
+        private BigDecimal targetValue;
+        private BigDecimal valueDrift;
+        private BigDecimal valueDriftPercentage;
 
         public HoldingDetailDTO() {}
 
@@ -123,5 +126,14 @@ public class PortfolioDashboardDTO {
 
         public BigDecimal getAllocation() { return allocation; }
         public void setAllocation(BigDecimal allocation) { this.allocation = allocation; }
+
+        public BigDecimal getTargetValue() { return targetValue; }
+        public void setTargetValue(BigDecimal targetValue) { this.targetValue = targetValue; }
+
+        public BigDecimal getValueDrift() { return valueDrift; }
+        public void setValueDrift(BigDecimal valueDrift) { this.valueDrift = valueDrift; }
+
+        public BigDecimal getValueDriftPercentage() { return valueDriftPercentage; }
+        public void setValueDriftPercentage(BigDecimal valueDriftPercentage) { this.valueDriftPercentage = valueDriftPercentage; }
     }
 }

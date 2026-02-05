@@ -157,6 +157,9 @@ public class PortfolioService {
         if (updated.getPurchaseDate() != null) {
             holding.setPurchaseDate(updated.getPurchaseDate());
         }
+        if (updated.getTargetValue() != null) {
+            holding.setTargetValue(updated.getTargetValue());
+        }
         if (updated.getPortfolioId() != null) {
             holding.setPortfolioId(updated.getPortfolioId());
         }
@@ -373,6 +376,21 @@ public class PortfolioService {
                         dto.setAllocation(allocation);
                     } else {
                         dto.setAllocation(BigDecimal.ZERO);
+                    }
+
+                    // Set target value and calculate drift if target exists
+                    if (holding.getTargetValue() != null) {
+                        dto.setTargetValue(holding.getTargetValue());
+                        BigDecimal currentValue = dto.getCurrentValue();
+                        BigDecimal drift = currentValue.subtract(holding.getTargetValue());
+                        dto.setValueDrift(drift);
+                        if (holding.getTargetValue().compareTo(BigDecimal.ZERO) != 0) {
+                            BigDecimal driftPercent = drift.divide(holding.getTargetValue(), 4, RoundingMode.HALF_UP)
+                                    .multiply(new BigDecimal(100));
+                            dto.setValueDriftPercentage(driftPercent);
+                        } else {
+                            dto.setValueDriftPercentage(BigDecimal.ZERO);
+                        }
                     }
 
                     return dto;

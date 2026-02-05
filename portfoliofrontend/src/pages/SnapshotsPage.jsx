@@ -151,7 +151,55 @@ const SnapshotsPage = ({ portfolioId }) => {
       ) : snapshots.length === 0 ? (
         <GlowCard className="snapshots-empty">No snapshots yet.</GlowCard>
       ) : (
-        <div className="snapshots-grid">
+        <>
+          {snapshots.length > 1 && (
+            <GlowCard className="snapshots-chart-card" style={{ marginBottom: '1.5rem' }}>
+              <h3>Snapshot Timeline</h3>
+              <div style={{ padding: '1rem', background: 'var(--bg-light)', borderRadius: '12px' }}>
+                <svg viewBox="0 0 600 250" style={{ width: '100%', height: '250px' }}>
+                  {(() => {
+                    const sortedSnapshots = [...snapshots].sort((a, b) => new Date(a.snapshotDate) - new Date(b.snapshotDate));
+                    const values = sortedSnapshots.map(s => Number(s.totalValue || 0));
+                    const minValue = Math.min(...values);
+                    const maxValue = Math.max(...values);
+                    const range = maxValue - minValue || 1;
+                    const padding = 50;
+                    const width = 600 - (padding * 2);
+                    const height = 250 - (padding * 2);
+                    
+                    const points = sortedSnapshots.map((snapshot, index) => {
+                      const x = padding + (index / Math.max(sortedSnapshots.length - 1, 1)) * width;
+                      const y = padding + height - ((Number(snapshot.totalValue || 0) - minValue) / range) * height;
+                      return { x, y, value: Number(snapshot.totalValue || 0), date: snapshot.snapshotDate, currency: snapshot.currency };
+                    });
+                    
+                    const pathData = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+                    
+                    return (
+                      <>
+                        <line x1={padding} y1={padding} x2={padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                        <line x1={padding} y1={padding + height} x2={width + padding} y2={padding + height} stroke="var(--border)" strokeWidth="1" />
+                        <path d={pathData} fill="none" stroke="#DC2626" strokeWidth="3" strokeLinecap="round" />
+                        {points.map((point, index) => (
+                          <g key={index}>
+                            <circle cx={point.x} cy={point.y} r="4" fill="#DC2626" />
+                            {index === 0 || index === points.length - 1 ? (
+                              <text x={point.x} y={point.y - 8} textAnchor="middle" fontSize="9" fill="var(--text-light)">
+                                {new Date(point.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </text>
+                            ) : null}
+                          </g>
+                        ))}
+                        <text x={padding + width / 2} y={height + padding + 25} textAnchor="middle" fontSize="11" fill="var(--text-light)">Date</text>
+                        <text x="15" y={padding + height / 2} textAnchor="middle" fontSize="11" fill="var(--text-light)" transform={`rotate(-90 15 ${padding + height / 2})`}>Value</text>
+                      </>
+                    );
+                  })()}
+                </svg>
+              </div>
+            </GlowCard>
+          )}
+          <div className="snapshots-grid">
           {snapshots.map(snapshot => (
             <GlowCard key={snapshot.snapshotId} className="snapshots-card">
               {editingId === snapshot.snapshotId ? (
@@ -208,6 +256,7 @@ const SnapshotsPage = ({ portfolioId }) => {
             </GlowCard>
           ))}
         </div>
+        </>
       )}
     </div>
   );

@@ -9,7 +9,8 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
     assetType: 'STOCK',
     quantity: '',
     currency: 'INR',
-    purchaseDate: new Date().toISOString().split('T')[0]
+    purchaseDate: new Date().toISOString().split('T')[0],
+    targetValue: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,7 +43,8 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
         assetType: formData.assetType,
         quantity: parseFloat(formData.quantity),
         currency: formData.currency,
-        purchaseDate: formData.purchaseDate
+        purchaseDate: formData.purchaseDate,
+        targetValue: formData.targetValue ? parseFloat(formData.targetValue) : null
       });
       onSuccess();
       onClose();
@@ -130,15 +132,31 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
 
           {/* Prices will be automatically filled by the system based on purchase date and current date */}
 
-          <div className="form-group">
-            <label htmlFor="purchaseDate">Purchase Date</label>
-            <input
-              type="date"
-              id="purchaseDate"
-              name="purchaseDate"
-              value={formData.purchaseDate}
-              onChange={handleChange}
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="purchaseDate">Purchase Date</label>
+              <input
+                type="date"
+                id="purchaseDate"
+                name="purchaseDate"
+                value={formData.purchaseDate}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="targetValue">Target Value (Optional)</label>
+              <input
+                type="number"
+                id="targetValue"
+                name="targetValue"
+                value={formData.targetValue}
+                onChange={handleChange}
+                placeholder="e.g., 10000"
+                step="0.01"
+                min="0"
+              />
+            </div>
           </div>
 
           {formData.quantity && formData.purchasePrice && formData.currentPrice && (
@@ -179,4 +197,3 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
 };
 
 export default AddHoldingModal;
-
