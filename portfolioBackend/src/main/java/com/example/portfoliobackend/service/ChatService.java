@@ -48,6 +48,7 @@ public class ChatService {
         Map<String, Object> textPart = new HashMap<>();
         textPart.put("text", prompt);
         Map<String, Object> content = new HashMap<>();
+        content.put("role", "user");
         content.put("parts", List.of(textPart));
         payload.put("contents", List.of(content));
 
@@ -57,8 +58,12 @@ public class ChatService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        Map<String, Object> response = restTemplate.postForObject(GEMINI_URL, entity, Map.class);
-        return extractReply(response);
+        try {
+            Map<String, Object> response = restTemplate.postForObject(GEMINI_URL, entity, Map.class);
+            return extractReply(response);
+        } catch (Exception ex) {
+            return "Chat service error. Please verify your Gemini API key and try again.";
+        }
     }
 
     private String buildContext(Long portfolioId) {
