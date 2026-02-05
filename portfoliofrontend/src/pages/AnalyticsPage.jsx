@@ -22,11 +22,10 @@ const AnalyticsPage = ({ portfolioId }) => {
   const [error, setError] = useState(null);
   const [demoMode, setDemoMode] = useState(false);
 
-  const loadAlphaVantageDemo = async () => {
+  const loadDemoAnalytics = async () => {
+    setDemoMode(true);
     try {
-      const response = await fetch(
-        'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo'
-      );
+      const response = await fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo');
       const data = await response.json();
       const series = data['Time Series (Daily)'] || {};
       const dates = Object.keys(series);
@@ -43,27 +42,29 @@ const AnalyticsPage = ({ portfolioId }) => {
         totalCost,
         totalGainLoss
       });
-      setAllocations({
-        STOCK: 55,
-        ETF: 30,
-        BOND: 15
-      });
-      setDrift({
-        STOCK: 1.0,
-        ETF: -0.4,
-        BOND: 0.2
-      });
-      setTargets([
-        { targetId: 1, assetType: 'STOCK', targetPercentage: 55 },
-        { targetId: 2, assetType: 'ETF', targetPercentage: 30 },
-        { targetId: 3, assetType: 'BOND', targetPercentage: 15 }
-      ]);
-      setTrend(null);
-      setDemoMode(true);
-      return true;
     } catch (err) {
-      return false;
+      setSummary({
+        totalMarketValue: 150000,
+        totalCost: 145000,
+        totalGainLoss: 5000
+      });
     }
+
+    setAllocations({
+      STOCK: 60,
+      ETF: 25,
+      BOND: 15
+    });
+    setDrift({
+      STOCK: 1.2,
+      ETF: -0.6,
+      BOND: 0.4
+    });
+    setTargets([
+      { targetId: 1, assetType: 'STOCK', targetPercentage: 60 },
+      { targetId: 2, assetType: 'ETF', targetPercentage: 25 },
+      { targetId: 3, assetType: 'BOND', targetPercentage: 15 }
+    ]);
   };
 
   useEffect(() => {
@@ -89,9 +90,30 @@ const AnalyticsPage = ({ portfolioId }) => {
         setTargets(targetsRes.data);
         setTrend(trendRes.data);
       } catch (err) {
-        const demoLoaded = await loadAlphaVantageDemo();
-        if (!demoLoaded) {
+        if (err?.response?.status === 500) {
+          await loadDemoAnalytics();
+          setTrend({
+            portfolioId,
+            actual: [
+              { date: '2024-01-01', value: 120000 },
+              { date: '2024-02-01', value: 128000 },
+              { date: '2024-03-01', value: 135500 }
+            ],
+            forecast: [
+              { date: '2024-04-01', value: 142000 },
+              { date: '2024-05-01', value: 148500 },
+              { date: '2024-06-01', value: 154000 }
+            ],
+            movingAverage: [
+              { date: '2024-01-01', value: 120000 },
+              { date: '2024-02-01', value: 124000 },
+              { date: '2024-03-01', value: 127800 }
+            ],
+            narrative: 'Demo trend indicates gradual growth based on recent snapshots.'
+          });
+        } else {
           setError('Failed to load analytics data');
+          console.error(err);
         }
       } finally {
         setLoading(false);
@@ -145,7 +167,7 @@ const AnalyticsPage = ({ portfolioId }) => {
 
       {demoMode && (
         <div className="analytics-demo-banner">
-          Showing demo analytics from Alpha Vantage demo API.
+          Showing demo analytics data due to a server error.
         </div>
       )}
 
@@ -353,3 +375,4 @@ const AnalyticsPage = ({ portfolioId }) => {
 };
 
 export default AnalyticsPage;
+

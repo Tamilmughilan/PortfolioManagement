@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { sendChat } from '../services/api';
 import '../styles/ChatWidget.css';
@@ -11,15 +11,6 @@ const ChatWidget = ({ portfolioId }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const historyPayload = useMemo(() => {
-    // Keep last 12 turns to control prompt size
-    const last = messages.slice(-12);
-    return last.map(m => ({
-      role: m.role === 'assistant' ? 'assistant' : 'user',
-      content: m.text
-    }));
-  }, [messages]);
-
   const handleSend = async () => {
     const text = input.trim();
     if (!text) return;
@@ -27,11 +18,7 @@ const ChatWidget = ({ portfolioId }) => {
     setMessages(prev => [...prev, { role: 'user', text }]);
     try {
       setLoading(true);
-      const response = await sendChat({
-        message: text,
-        portfolioId,
-        history: historyPayload
-      });
+      const response = await sendChat({ message: text, portfolioId });
       setMessages(prev => [...prev, { role: 'assistant', text: response.data.reply }]);
     } catch (err) {
       setMessages(prev => [
@@ -57,7 +44,7 @@ const ChatWidget = ({ portfolioId }) => {
           <div className="chat-header">
             <div>
               <h4>Stock Assistant</h4>
-              <span>General + light portfolio context</span>
+              <span>General + portfolio context</span>
             </div>
             <button className="chat-close" onClick={() => setOpen(false)}>
               <X size={18} />
