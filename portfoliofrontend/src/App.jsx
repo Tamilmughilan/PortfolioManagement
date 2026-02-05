@@ -12,6 +12,7 @@ import AssetsPage from './pages/AssetsPage';
 import TargetsPage from './pages/TargetsPage';
 import SnapshotsPage from './pages/SnapshotsPage';
 import ProfilePage from './pages/ProfilePage';
+import ChatWidget from './components/ChatWidget';
 import { getUserPortfolios } from './services/api';
 import useTheme from './hooks/useTheme';
 import './App.css';
@@ -208,6 +209,8 @@ function App() {
           onSuccess={handleHoldingAdded}
         />
       )}
+
+      <ChatWidget portfolioId={selectedPortfolio} />
     </div>
   );
 }

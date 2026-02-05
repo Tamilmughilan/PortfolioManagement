@@ -1,8 +1,10 @@
 package com.example.portfoliobackend.service;
 
 import com.example.portfoliobackend.dto.GoalForecastDTO;
+import com.example.portfoliobackend.dto.TrendForecastDTO;
 import com.example.portfoliobackend.dto.WhatIfRequestDTO;
 import com.example.portfoliobackend.dto.WhatIfResponseDTO;
+import com.example.portfoliobackend.entity.PortfolioSnapshot;
 import com.example.portfoliobackend.entity.PortfolioGoal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ForecastService {
@@ -106,6 +109,69 @@ public class ForecastService {
                 narrative,
                 endDate
         );
+    }
+
+    public TrendForecastDTO forecastTrend(Long portfolioId, int monthsAhead) {
+        List<PortfolioSnapshot> snapshots = portfolioService.getSnapshotsByPortfolioIdAsc(portfolioId);
+        if (snapshots == null || snapshots.isEmpty()) {
+            return new TrendForecastDTO(portfolioId, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                    "Not enough snapshot data to forecast.");
+        }
+
+        List<TrendForecastDTO.Point> actual = snapshots.stream()
+                .map(s -> new TrendForecastDTO.Point(s.getSnapshotDate(), s.getTotalValue()))
+                .collect(Collectors.toList());
+
+        List<TrendForecastDTO.Point> movingAverage = buildMovingAverage(actual, 3);
+
+        int n = actual.size();
+        double sumX = 0;
+        double sumY = 0;
+        double sumXY = 0;
+        double sumXX = 0;
+        for (int i = 0; i < n; i++) {
+            double x = i;
+            double y = actual.get(i).getValue().doubleValue();
+            sumX += x;
+            sumY += y;
+            sumXY += x * y;
+            sumXX += x * x;
+        }
+        double slope = (n * sumXY - sumX * sumY) / Math.max(1.0, (n * sumXX - sumX * sumX));
+        double intercept = (sumY - slope * sumX) / n;
+
+        List<TrendForecastDTO.Point> forecast = new ArrayList<>();
+        LocalDate lastDate = actual.get(n - 1).getDate();
+        for (int i = 1; i <= monthsAhead; i++) {
+            double y = slope * (n - 1 + i) + intercept;
+            forecast.add(new TrendForecastDTO.Point(lastDate.plusMonths(i), BigDecimal.valueOf(y).setScale(2, RoundingMode.HALF_UP)));
+        }
+
+        String narrative = slope >= 0
+                ? "Trend indicates gradual growth based on your snapshot history."
+                : "Trend indicates a downward drift based on your snapshot history.";
+
+        return new TrendForecastDTO(portfolioId, actual, forecast, movingAverage, narrative);
+    }
+
+    private List<TrendForecastDTO.Point> buildMovingAverage(List<TrendForecastDTO.Point> points, int window) {
+        List<TrendForecastDTO.Point> averages = new ArrayList<>();
+        if (points == null || points.isEmpty()) {
+            return averages;
+        }
+        int size = points.size();
+        for (int i = 0; i < size; i++) {
+            int start = Math.max(0, i - window + 1);
+            BigDecimal sum = BigDecimal.ZERO;
+            int count = 0;
+            for (int j = start; j <= i; j++) {
+                sum = sum.add(points.get(j).getValue());
+                count++;
+            }
+            BigDecimal avg = sum.divide(new BigDecimal(count), 2, RoundingMode.HALF_UP);
+            averages.add(new TrendForecastDTO.Point(points.get(i).getDate(), avg));
+        }
+        return averages;
     }
 
     private int resolveMonths(Integer months, LocalDate targetDate) {
