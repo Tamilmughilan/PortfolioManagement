@@ -37,6 +37,17 @@
   border-radius: 0 !important;
 }
 
+/* Remove hover animations and transitions to create a plain, professional UI */
+* {
+  transition: none !important;
+}
+
+*:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-light);
