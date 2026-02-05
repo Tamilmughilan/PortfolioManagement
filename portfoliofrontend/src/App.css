@@ -6,12 +6,12 @@
   /* Keep backgrounds white */
   --bg-light: #ffffff;
   --bg-white: #ffffff;
-  /* Make text a light red color as requested */
-  --text-dark: #F87171; /* light red for primary text */
-  --text-light: #F87171; /* use same light red for consistency */
-  --border: rgba(185, 28, 28, 0.08);
-  --shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
-  --shadow-lg: 0 20px 40px -12px rgba(0,0,0,0.06);
+  /* Light mode: black for primary text, gray for secondary */
+  --text-dark: #000000; /* all main text black */
+  --text-light: #374151; /* muted gray for secondary text */
+  --border: rgba(0, 0, 0, 0.06);
+  --shadow: 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.06);
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
@@ -135,40 +135,46 @@ body {
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }
 
-/* Action Buttons */
+/* Action Buttons: neutral black text on white background by default */
 .action-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  /* removed radius via global rule */
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: 1px solid var(--border);
   background: var(--bg-white);
   color: var(--text-dark);
 }
 
 .action-btn:hover {
-  background: rgba(185,28,28,0.06);
+  background: rgba(0,0,0,0.02);
   color: var(--text-dark);
-  box-shadow: none;
-  transform: none;
 }
 
-.action-btn.add-btn {
-  /* use white button with red border/text instead of red filled */
+/* Primary CTA and selected nav/button: red filled */
+.action-btn.add-btn,
+.btn-primary {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border: 1px solid var(--primary) !important;
+}
+
+/* Selected button utility (applied to selected nav items) */
+.btn-selected {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border: 1px solid var(--primary) !important;
+}
+
+/* Secondary buttons: white background, black text */
+.btn-secondary,
+.action-btn:not(.add-btn) {
   background: var(--bg-white);
   color: var(--text-dark);
-  border: 1px solid var(--primary);
-}
-
-.action-btn.add-btn:hover {
-  background: rgba(185,28,28,0.08);
-  color: var(--text-dark);
-  box-shadow: none;
+  border: 1px solid var(--border);
 }
 
 .action-btn.refresh-btn {
@@ -280,22 +286,15 @@ body {
   color: var(--text-dark) !important;
 }
 
-/* Ensure headings and body text use light red */
+/* Ensure headings and body text use black in light mode */
 h1, h2, h3, h4, h5, h6, p, span, label, button, a {
   color: var(--text-dark) !important;
 }
 
-/* Selected button styles: red background with white text for CTAs */
-.btn-selected {
-  background: var(--primary);
-  color: #fff !important;
-  border: 1px solid var(--primary) !important;
-}
-
-/* Ensure nav active remains red text (highlight) in light mode as well */
+/* Nav active: in light mode use filled red (btn-selected applied by component) */
 .nav-item.active {
-  color: var(--primary) !important;
-  background: transparent !important;
+  color: #fff !important;
+  background: var(--primary) !important;
   border-left: none !important;
 }
 
