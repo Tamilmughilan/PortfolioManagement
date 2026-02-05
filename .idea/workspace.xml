@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5985b20-9554-434c-9968-298a71520f92" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/Navbar.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/HoldingCard.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/HoldingCard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Modal.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Modal.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Navbar.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Navbar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Profile.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Profile.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Reactbits.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Reactbits.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Snapshots.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Snapshots.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/Targets.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Targets.css" afterDir="false" />
-    </list>
+    <list default="true" id="a5985b20-9554-434c-9968-298a71520f92" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
