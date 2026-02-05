@@ -3,6 +3,9 @@ package com.example.portfoliobackend.service;
 import com.example.portfoliobackend.dto.ChatRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +18,7 @@ import java.util.Map;
 public class ChatService {
 
     private static final String GEMINI_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=%s";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
 
     @Value("${gemini.api.key:}")
     private String geminiKey;
@@ -48,9 +51,13 @@ public class ChatService {
         content.put("parts", List.of(textPart));
         payload.put("contents", List.of(content));
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("x-goog-api-key", geminiKey);
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
+
         RestTemplate restTemplate = new RestTemplate();
-        String url = String.format(GEMINI_URL, geminiKey);
-        Map<String, Object> response = restTemplate.postForObject(url, payload, Map.class);
+        Map<String, Object> response = restTemplate.postForObject(GEMINI_URL, entity, Map.class);
         return extractReply(response);
     }
 
