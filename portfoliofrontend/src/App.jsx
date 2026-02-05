@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Plus, RefreshCw } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
 import AnalyticsPage from './pages/AnalyticsPage';
@@ -159,16 +158,15 @@ function App() {
             {selectedPortfolio && (
               <>
                 <button className="action-btn add-btn" onClick={() => setShowAddHolding(true)}>
-                  <Plus size={18} />
                   <span>Add Holding</span>
                 </button>
                 <button className="action-btn refresh-btn" onClick={handleRefresh} title="Refresh data">
-                  <RefreshCw size={18} />
+                  <span>Refresh</span>
                 </button>
               </>
             )}
             <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
-              {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              {isDark ? 'Light' : 'Dark'}
             </button>
           </div>
         </div>

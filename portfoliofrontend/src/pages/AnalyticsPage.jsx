@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { PieChart, TrendingUp, TrendingDown, Target, AlertTriangle, CheckCircle } from 'lucide-react';
 import {
   getAnalyticsSummary,
   getAllocationPercentages,
@@ -76,7 +75,6 @@ const AnalyticsPage = ({ portfolioId }) => {
       <SectionHeader
         title="Portfolio Analytics"
         subtitle="Deep insights into your investment performance"
-        icon={<PieChart size={22} />}
       />
 
       {/* Summary Cards */}
@@ -85,19 +83,16 @@ const AnalyticsPage = ({ portfolioId }) => {
           label="Market Value"
           value={`₹${summary?.totalMarketValue?.toLocaleString() || '0'}`}
           subtext="Current market value"
-          icon={<TrendingUp size={20} />}
         />
         <StatCard
           label="Total Cost"
           value={`₹${summary?.totalCost?.toLocaleString() || '0'}`}
           subtext="Cost basis"
-          icon={<Target size={20} />}
         />
         <StatCard
           label="Total Gain/Loss"
           value={`${summary?.totalGainLoss >= 0 ? '+' : ''}₹${summary?.totalGainLoss?.toLocaleString() || '0'}`}
           subtext={`${getGainLossPercent()}%`}
-          icon={summary?.totalGainLoss >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
           trend={summary?.totalGainLoss >= 0 ? 'positive' : 'negative'}
         />
       </div>
@@ -169,7 +164,6 @@ const AnalyticsPage = ({ portfolioId }) => {
           <h2>Target Drift Analysis</h2>
           {driftEntries.length === 0 ? (
             <div className="empty-state">
-              <Target size={48} />
               <p>Set allocation targets to see drift analysis</p>
             </div>
           ) : (

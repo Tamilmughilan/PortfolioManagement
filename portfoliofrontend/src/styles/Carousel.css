@@ -18,12 +18,10 @@
 .carousel-viewport {
     flex: 1;
     overflow: hidden;
-    border-radius: 16px;
 }
 
 .carousel-track {
     display: grid;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .carousel-item {
@@ -50,21 +48,14 @@
     justify-content: center;
     width: 48px;
     height: 48px;
-    border-radius: 50%;
     border: none;
     background: var(--bg-white);
     color: var(--text-dark);
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow);
     flex-shrink: 0;
 }
 
 .carousel-btn:hover:not(.disabled) {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
 }
 
 .carousel-btn.disabled {
@@ -82,23 +73,18 @@
 .indicator {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
     border: none;
     background: var(--border);
     cursor: pointer;
-    transition: all 0.3s ease;
     padding: 0;
 }
 
 .indicator:hover {
-    background: var(--primary);
-    opacity: 0.6;
 }
 
 .indicator.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: var(--primary);
     width: 28px;
-    border-radius: 10px;
 }
 
 /* Responsive adjustments */

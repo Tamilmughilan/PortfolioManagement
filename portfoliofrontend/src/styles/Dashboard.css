@@ -37,42 +37,9 @@
 .stat-card {
   background: var(--bg-white);
   padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  animation: cardFadeIn 0.5s ease forwards;
-  opacity: 0;
-}
-
-.stat-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.stat-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.stat-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.stat-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-@keyframes cardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .stat-card::before {
@@ -162,7 +129,6 @@
   text-align: center;
   color: var(--text-light);
   background: var(--bg-white);
-  border-radius: 16px;
   border: 2px dashed var(--border);
 }
 
@@ -170,8 +136,6 @@
 .allocation-section {
   background: var(--bg-white);
   padding: 2rem;
-  border-radius: 16px;
-  box-shadow: var(--shadow);
   border: 1px solid var(--border);
 }
 
@@ -207,15 +171,12 @@
 .allocation-bar {
   background: var(--bg-light);
   height: 24px;
-  border-radius: 12px;
   overflow: hidden;
 }
 
 .allocation-fill {
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
   height: 100%;
-  border-radius: 12px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
@@ -257,9 +218,7 @@
   padding: 3rem 2rem;
   text-align: center;
   background: var(--bg-white);
-  border-radius: 16px;
   color: var(--text-light);
-  box-shadow: var(--shadow);
 }
 
 .error {

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MessageCircle, X, Send } from 'lucide-react';
 import '../styles/Chatbot.css';
 import '../styles/Chatbot.css';
 
@@ -53,7 +52,7 @@ const Chatbot = () => {
         onClick={() => setIsOpen(true)}
         title="Chat with Portfolio Assistant"
       >
-        <MessageCircle size={24} />
+        Chat
       </button>
 
       {/* Chat Modal */}
@@ -66,7 +65,7 @@ const Chatbot = () => {
                 className="chatbot-close"
                 onClick={() => setIsOpen(false)}
               >
-                <X size={20} />
+                ×
               </button>
             </div>
 
@@ -129,7 +128,7 @@ const Chatbot = () => {
                       onClick={handleSendMessage}
                       disabled={!inputMessage.trim()}
                     >
-                      <Send size={18} />
+                      Send
                     </button>
                   </div>
                 </>

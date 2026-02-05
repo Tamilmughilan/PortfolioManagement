@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { BookOpen, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
 import { getPortfolioDriftStory } from '../services/api';
 import SectionHeader from '../components/reactbits/SectionHeader';
 import StatCard from '../components/reactbits/StatCard';
@@ -36,7 +35,6 @@ const PortfolioDriftPage = ({ portfolioId }) => {
         <SectionHeader
           title="Portfolio Drift"
           subtitle="We are assembling your story..."
-          icon={<BookOpen size={22} />}
         />
         <div className="drift-stats">
           {Array.from({ length: 3 }).map((_, index) => (
@@ -68,7 +66,6 @@ const PortfolioDriftPage = ({ portfolioId }) => {
       <SectionHeader
         title="Portfolio Drift"
         subtitle="A clear story of how your portfolio evolved from day one."
-        icon={<BookOpen size={22} />}
       />
 
       <div className="drift-hero">
@@ -79,17 +76,14 @@ const PortfolioDriftPage = ({ portfolioId }) => {
               <p>{drift.narrative}</p>
             </div>
             <div className={`drift-hero-badge ${isPositive ? 'positive' : 'negative'}`}>
-              {isPositive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
               <span>{isPositive ? '+' : ''}{Number(driftPercent).toFixed(2)}%</span>
             </div>
           </div>
           <div className="drift-hero-dates">
             <div>
-              <Calendar size={16} />
               <span>Start: {drift.initialDate}</span>
             </div>
             <div>
-              <Calendar size={16} />
               <span>Latest: {drift.latestDate}</span>
             </div>
           </div>
@@ -101,19 +95,16 @@ const PortfolioDriftPage = ({ portfolioId }) => {
           label="Initial Value"
           value={`${currency} ${Number(drift.initialValue || 0).toFixed(2)}`}
           subtext="Where your story started"
-          icon={<TrendingUp size={18} />}
         />
         <StatCard
           label="Latest Value"
           value={`${currency} ${Number(drift.latestValue || 0).toFixed(2)}`}
           subtext="Where you are now"
-          icon={<TrendingUp size={18} />}
         />
         <StatCard
           label="Total Drift"
           value={`${currency} ${Number(Math.abs(driftValue)).toFixed(2)}`}
           subtext={`${isPositive ? '+' : '-'}${Number(Math.abs(driftPercent)).toFixed(2)}% from start`}
-          icon={isPositive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
           trend={isPositive ? 'positive' : 'negative'}
         />
       </div>

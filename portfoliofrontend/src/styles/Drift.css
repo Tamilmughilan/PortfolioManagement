@@ -31,7 +31,6 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.8rem;
-  border-radius: 999px;
   font-weight: 600;
   background: rgba(239, 68, 68, 0.1);
   color: var(--danger);
@@ -92,9 +91,7 @@
 .drift-entry-marker {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+  background: var(--primary);
   margin-top: 0.2rem;
   flex-shrink: 0;
 }
@@ -142,7 +139,6 @@
 .drift-error,
 .drift-empty {
   padding: 2rem;
-  border-radius: 16px;
   background: var(--bg-white);
   color: var(--text-light);
   border: 1px solid var(--border);

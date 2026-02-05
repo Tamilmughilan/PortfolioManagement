@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, Layers } from 'lucide-react';
 import { getPortfolioDashboard } from '../services/api';
 import HoldingCard from './HoldingCard';
 import Carousel from './Carousel';
@@ -39,7 +38,6 @@ const Dashboard = ({ portfolioId }) => {
         <SectionHeader
           title="Portfolio Dashboard"
           subtitle="Fetching your latest positions and performance."
-          icon={<DollarSign size={22} />}
         />
         <div className="stats-grid">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -76,7 +74,6 @@ const Dashboard = ({ portfolioId }) => {
       <SectionHeader
         title={portfolio.portfolioName}
         subtitle={`${portfolio.baseCurrency} • Since ${new Date(portfolio.createdAt).toLocaleDateString()}`}
-        icon={<DollarSign size={22} />}
       />
 
       <div className="stats-grid">
@@ -84,26 +81,22 @@ const Dashboard = ({ portfolioId }) => {
           label="Total Value"
           value={`${portfolio.baseCurrency} ${parseFloat(portfolio.totalValue || 0).toFixed(2)}`}
           subtext="Current portfolio value"
-          icon={<DollarSign size={20} />}
         />
         <StatCard
           label="Total Invested"
           value={`${portfolio.baseCurrency} ${totalInvested.toFixed(2)}`}
           subtext="Cost basis"
-          icon={<Layers size={20} />}
         />
         <StatCard
           label="Gain / Loss"
           value={`${portfolio.baseCurrency} ${Math.abs(totalGainLoss).toFixed(2)}`}
           subtext={`${totalGainLossPercent.toFixed(2)}%`}
-          icon={totalGainLoss >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
           trend={totalGainLoss >= 0 ? 'positive' : 'negative'}
         />
         <StatCard
           label="Holdings Count"
           value={`${holdings.length}`}
           subtext="Different investments"
-          icon={<TrendingUp size={20} />}
         />
       </div>
 

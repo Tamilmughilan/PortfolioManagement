@@ -44,11 +44,9 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #FECACA;
-  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FCA5A5;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {

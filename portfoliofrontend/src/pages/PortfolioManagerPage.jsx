@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, FolderOpen } from 'lucide-react';
 import {
   getUserPortfolios,
   createPortfolio,
@@ -89,7 +88,6 @@ const PortfolioManagerPage = ({ user }) => {
       <SectionHeader
         title="Portfolio Manager"
         subtitle="Create, edit, or remove portfolios with ease."
-        icon={<FolderOpen size={22} />}
       />
 
       <GlowCard className="portfolio-form-card">
@@ -123,11 +121,11 @@ const PortfolioManagerPage = ({ user }) => {
           <button type="submit" className="portfolio-submit">
             {editingId ? (
               <>
-                <Pencil size={16} /> Update Portfolio
+                Update Portfolio
               </>
             ) : (
               <>
-                <Plus size={16} /> Add Portfolio
+                Add Portfolio
               </>
             )}
           </button>
@@ -148,10 +146,10 @@ const PortfolioManagerPage = ({ user }) => {
               </div>
               <div className="portfolio-actions">
                 <button type="button" onClick={() => startEdit(portfolio)}>
-                  <Pencil size={16} /> Edit
+                  Edit
                 </button>
                 <button type="button" onClick={() => handleDelete(portfolio.portfolioId)} className="danger">
-                  <Trash2 size={16} /> Delete
+                  Delete
                 </button>
               </div>
             </GlowCard>

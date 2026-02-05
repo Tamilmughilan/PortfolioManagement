@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Mail, User, KeyRound } from 'lucide-react';
 import { login, signup } from '../services/api';
 import '../styles/Auth.css';
 
@@ -69,7 +68,6 @@ const AuthPage = ({ onAuthenticated }) => {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-icon">
-            <ShieldCheck size={26} />
           </div>
           <h1>{mode === 'login' ? 'Welcome Back' : 'Create Your Account'}</h1>
           <p>{mode === 'login' ? 'Sign in to access your portfolios.' : 'Start tracking your investments today.'}</p>
@@ -99,7 +97,6 @@ const AuthPage = ({ onAuthenticated }) => {
             <div className="auth-field">
               <label htmlFor="identifier">Email or Username</label>
               <div className="auth-input">
-                <Mail size={18} />
                 <input
                   id="identifier"
                   name="identifier"
@@ -114,7 +111,6 @@ const AuthPage = ({ onAuthenticated }) => {
               <div className="auth-field">
                 <label htmlFor="username">Username</label>
                 <div className="auth-input">
-                  <User size={18} />
                   <input
                     id="username"
                     name="username"
@@ -128,7 +124,6 @@ const AuthPage = ({ onAuthenticated }) => {
               <div className="auth-field">
                 <label htmlFor="email">Email</label>
                 <div className="auth-input">
-                  <Mail size={18} />
                   <input
                     id="email"
                     name="email"
@@ -145,7 +140,6 @@ const AuthPage = ({ onAuthenticated }) => {
           <div className="auth-field">
             <label htmlFor="password">Password</label>
             <div className="auth-input">
-              <KeyRound size={18} />
               <input
                 id="password"
                 name="password"

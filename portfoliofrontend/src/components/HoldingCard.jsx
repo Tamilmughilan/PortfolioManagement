@@ -1,5 +1,4 @@
 import React from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 import '../styles/HoldingCard.css';
 
 const HoldingCard = ({ holding, currency }) => {
@@ -13,7 +12,6 @@ const HoldingCard = ({ holding, currency }) => {
           <span className="asset-type">{holding.assetType}</span>
         </div>
         <div className={`gain-loss-badge ${isPositive ? 'positive' : 'negative'}`}>
-          {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
           <span>{isPositive ? '+' : ''}{holding.gainLossPercentage?.toFixed(2)}%</span>
         </div>
       </div>

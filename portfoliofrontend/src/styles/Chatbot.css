@@ -4,15 +4,13 @@
   right: 20px;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   border: none;
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   z-index: 1000;
 }
@@ -37,13 +35,11 @@
 
 .chatbot-modal {
   background: var(--bg-color);
-  border-radius: 12px;
   width: 90%;
   max-width: 400px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
@@ -69,12 +65,9 @@
   color: var(--text-secondary);
   cursor: pointer;
   padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
 }
 
 .chatbot-close:hover {
-  background: var(--hover-bg);
   color: var(--text-color);
 }
 
@@ -114,10 +107,8 @@
 .disclaimer-reject {
   padding: 10px 20px;
   border: none;
-  border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .disclaimer-accept {
@@ -126,7 +117,6 @@
 }
 
 .disclaimer-accept:hover {
-  background: #059669;
 }
 
 .disclaimer-reject {
@@ -136,7 +126,6 @@
 }
 
 .disclaimer-reject:hover {
-  background: var(--border-color);
 }
 
 .chatbot-messages {
@@ -166,7 +155,6 @@
 
 .message-content {
   padding: 12px 16px;
-  border-radius: 18px;
   font-size: 14px;
   line-height: 1.4;
   word-wrap: break-word;
@@ -175,13 +163,11 @@
 .user-message .message-content {
   background: #667eea;
   color: white;
-  border-bottom-right-radius: 4px;
 }
 
 .bot-message .message-content {
   background: var(--hover-bg);
   color: var(--text-color);
-  border-bottom-left-radius: 4px;
 }
 
 .message-timestamp {
@@ -203,7 +189,6 @@
   flex: 1;
   padding: 12px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 24px;
   background: var(--input-bg);
   color: var(--text-color);
   font-size: 14px;
@@ -218,18 +203,15 @@
   width: 44px;
   height: 44px;
   border: none;
-  border-radius: 50%;
   background: #667eea;
   color: white;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .chatbot-input button:hover:not(:disabled) {
-  background: #5a67d8;
 }
 
 .chatbot-input button:disabled {

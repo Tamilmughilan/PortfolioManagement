@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { History, TrendingUp, TrendingDown, Calendar, DollarSign, BarChart3 } from 'lucide-react';
 import SectionHeader from '../components/reactbits/SectionHeader';
 import GlowCard from '../components/reactbits/GlowCard';
 import StatCard from '../components/reactbits/StatCard';
@@ -113,7 +112,6 @@ const StoryPage = ({ portfolioId }) => {
         <SectionHeader
           title="Portfolio Story"
           subtitle="Loading your portfolio journey..."
-          icon={<History size={22} />}
         />
         <div className="story-loading">
           <div className="story-skeleton">
@@ -135,7 +133,6 @@ const StoryPage = ({ portfolioId }) => {
       <SectionHeader
         title="Portfolio Story"
         subtitle="Track your portfolio's journey through time"
-        icon={<History size={22} />}
       />
 
       {/* Summary Stats */}
@@ -143,21 +140,18 @@ const StoryPage = ({ portfolioId }) => {
         <StatCard
           title="Total Portfolio Value"
           value={formatCurrency(latestSnapshot?.totalValue || 0)}
-          icon={<DollarSign size={20} />}
           trend="neutral"
         />
         <StatCard
           title="Total Growth"
           value={formatCurrency(totalGrowth)}
           subtitle={`${totalGrowthPercent >= 0 ? '+' : ''}${totalGrowthPercent.toFixed(2)}%`}
-          icon={totalGrowth >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
           trend={totalGrowth >= 0 ? 'positive' : 'negative'}
         />
         <StatCard
           title="Time Period"
           value={`${snapshots.length} Snapshots`}
           subtitle={`${formatDate(firstSnapshot?.date)} - ${formatDate(latestSnapshot?.date)}`}
-          icon={<Calendar size={20} />}
           trend="neutral"
         />
       </div>
@@ -176,18 +170,15 @@ const StoryPage = ({ portfolioId }) => {
               <GlowCard className="timeline-content">
                 <div className="snapshot-header">
                   <div className="snapshot-date">
-                    <Calendar size={16} />
                     <span>{formatDate(snapshot.date)}</span>
                   </div>
                   <div className="snapshot-value">
-                    <BarChart3 size={16} />
                     <span>{formatCurrency(snapshot.totalValue)}</span>
                   </div>
                 </div>
 
                 <div className="snapshot-change">
                   <span className={`change-amount ${snapshot.change >= 0 ? 'positive' : 'negative'}`}>
-                    {snapshot.change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                     {formatCurrency(Math.abs(snapshot.change))}
                     ({snapshot.changePercent >= 0 ? '+' : ''}{snapshot.changePercent.toFixed(2)}%)
                   </span>
@@ -216,7 +207,6 @@ const StoryPage = ({ portfolioId }) => {
       {/* Growth Chart Placeholder */}
       <GlowCard className="story-chart-placeholder">
         <div className="chart-placeholder-content">
-          <BarChart3 size={48} />
           <h3>Growth Visualization</h3>
           <p>Interactive chart showing portfolio growth over time will be implemented here.</p>
           <div className="dummy-chart">

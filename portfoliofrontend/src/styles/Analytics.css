@@ -35,21 +35,12 @@
   gap: 1rem;
   padding: 1.5rem;
   background: var(--bg-white);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: all 0.3s ease;
-}
-
-.summary-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
 }
 
 .summary-card .card-icon {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,22 +48,22 @@
 }
 
 .summary-card.market-value .card-icon {
-  background: linear-gradient(135deg, #DC2626 0%, #E11D48 100%);
+  background: var(--primary);
   color: white;
 }
 
 .summary-card.cost-basis .card-icon {
-  background: linear-gradient(135deg, #38b2ac 0%, #48bb78 100%);
+  background: #38b2ac;
   color: white;
 }
 
 .summary-card.gain-loss.positive .card-icon {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  background: var(--success);
   color: white;
 }
 
 .summary-card.gain-loss.negative .card-icon {
-  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  background: var(--danger);
   color: white;
 }
 
@@ -121,9 +112,7 @@
 
 .analytics-card {
   background: var(--bg-white);
-  border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: var(--shadow);
   border: 1px solid var(--border);
 }
 
@@ -173,7 +162,6 @@
 .legend-color {
   width: 12px;
   height: 12px;
-  border-radius: 3px;
   flex-shrink: 0;
 }
 
@@ -197,7 +185,6 @@
 
 .drift-item {
   padding: 1rem;
-  border-radius: 12px;
   background: var(--bg-light);
   border-left: 4px solid var(--border);
 }
@@ -274,7 +261,6 @@
 .drift-bar {
   height: 8px;
   background: var(--border);
-  border-radius: 4px;
   position: relative;
   margin-bottom: 0.75rem;
   overflow: visible;
@@ -282,9 +268,7 @@
 
 .drift-bar-actual {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  border-radius: 4px;
-  transition: width 0.3s ease;
+  background: var(--primary);
 }
 
 .drift-bar-target {
@@ -293,7 +277,6 @@
   width: 3px;
   height: 16px;
   background: var(--text-dark);
-  border-radius: 2px;
   transform: translateX(-50%);
 }
 
@@ -319,8 +302,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  border-radius: 50px;
+  background: var(--primary);
   color: white;
 }
 
@@ -332,7 +314,6 @@
   font-weight: 700;
   background: rgba(255, 255, 255, 0.2);
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
 }
 
 /* Empty State */
@@ -366,20 +347,11 @@
   height: 40px;
   border: 3px solid var(--border);
   border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .analytics-error {
   padding: 2rem;
   background: var(--bg-white);
-  border-radius: 12px;
   text-align: center;
   color: var(--danger);
   border: 1px solid var(--danger);

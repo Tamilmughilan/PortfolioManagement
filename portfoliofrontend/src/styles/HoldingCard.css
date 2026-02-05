@@ -1,26 +1,9 @@
 .holding-card {
   background: var(--bg-white);
-  border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  animation: holdingCardSlideIn 0.5s ease forwards;
-  opacity: 0;
-}
-
-@keyframes holdingCardSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .holding-card::before {
@@ -93,7 +76,6 @@
   font-weight: 500;
   background: var(--bg-light);
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
 }
 
 .gain-loss-badge {
@@ -101,7 +83,6 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.75rem;
-  border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
@@ -176,16 +157,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  border-radius: 10px;
   margin-bottom: 0.75rem;
 }
 
 .holding-gain-loss.positive {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
+  background: rgba(16, 185, 129, 0.1);
 }
 
 .holding-gain-loss.negative {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.1));
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .holding-gain-loss .label {
