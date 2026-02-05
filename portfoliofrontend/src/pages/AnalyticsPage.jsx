@@ -20,6 +20,51 @@ const AnalyticsPage = ({ portfolioId }) => {
   const [trend, setTrend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [demoMode, setDemoMode] = useState(false);
+
+  const loadAlphaVantageDemo = async () => {
+    try {
+      const response = await fetch(
+        'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo'
+      );
+      const data = await response.json();
+      const series = data['Time Series (Daily)'] || {};
+      const dates = Object.keys(series);
+      const latestDate = dates[0];
+      const previousDate = dates[1];
+      const latestClose = latestDate ? parseFloat(series[latestDate]['4. close']) : 150;
+      const prevClose = previousDate ? parseFloat(series[previousDate]['4. close']) : 145;
+      const marketValue = latestClose * 100;
+      const totalCost = prevClose * 100;
+      const totalGainLoss = marketValue - totalCost;
+
+      setSummary({
+        totalMarketValue: marketValue,
+        totalCost,
+        totalGainLoss
+      });
+      setAllocations({
+        STOCK: 55,
+        ETF: 30,
+        BOND: 15
+      });
+      setDrift({
+        STOCK: 1.0,
+        ETF: -0.4,
+        BOND: 0.2
+      });
+      setTargets([
+        { targetId: 1, assetType: 'STOCK', targetPercentage: 55 },
+        { targetId: 2, assetType: 'ETF', targetPercentage: 30 },
+        { targetId: 3, assetType: 'BOND', targetPercentage: 15 }
+      ]);
+      setTrend(null);
+      setDemoMode(true);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  };
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -28,6 +73,7 @@ const AnalyticsPage = ({ portfolioId }) => {
       try {
         setLoading(true);
         setError(null);
+        setDemoMode(false);
 
         const [summaryRes, allocRes, driftRes, targetsRes, trendRes] = await Promise.all([
           getAnalyticsSummary(portfolioId),
@@ -43,8 +89,10 @@ const AnalyticsPage = ({ portfolioId }) => {
         setTargets(targetsRes.data);
         setTrend(trendRes.data);
       } catch (err) {
-        setError('Failed to load analytics data');
-        console.error(err);
+        const demoLoaded = await loadAlphaVantageDemo();
+        if (!demoLoaded) {
+          setError('Failed to load analytics data');
+        }
       } finally {
         setLoading(false);
       }
@@ -95,6 +143,11 @@ const AnalyticsPage = ({ portfolioId }) => {
         icon={<PieChart size={22} />}
       />
 
+      {demoMode && (
+        <div className="analytics-demo-banner">
+          Showing demo analytics from Alpha Vantage demo API.
+        </div>
+      )}
 
       {/* Summary Cards */}
       <div className="analytics-summary">
@@ -300,4 +353,3 @@ const AnalyticsPage = ({ portfolioId }) => {
 };
 
 export default AnalyticsPage;
-

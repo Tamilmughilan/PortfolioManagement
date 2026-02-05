@@ -385,6 +385,16 @@
   border: 1px solid var(--danger);
 }
 
+.analytics-demo-banner {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  color: var(--primary);
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
 .trend-card {
   margin-top: 2rem;
 }
