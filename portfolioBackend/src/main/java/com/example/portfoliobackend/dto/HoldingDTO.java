@@ -18,6 +18,7 @@ public class HoldingDTO {
     private BigDecimal quantity;
     private BigDecimal purchasePrice;
     private BigDecimal currentPrice;
+    private BigDecimal targetValue;
     private String currency;
     private LocalDate purchaseDate;
 }

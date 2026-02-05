@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, TrendingUp, TrendingDown, Calendar } from 'lucide-react';
-import { getPortfolioDriftStory, refreshSnapshots } from '../services/api';
+import { getPortfolioDriftStory, getPortfolioDashboard, refreshSnapshots } from '../services/api';
 import SectionHeader from '../components/reactbits/SectionHeader';
 import StatCard from '../components/reactbits/StatCard';
 import GlowCard from '../components/reactbits/GlowCard';
@@ -9,6 +9,7 @@ import '../styles/Drift.css';
 
 const PortfolioDriftPage = ({ portfolioId }) => {
   const [drift, setDrift] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -18,8 +19,12 @@ const PortfolioDriftPage = ({ portfolioId }) => {
       if (!portfolioId) return;
       try {
         setLoading(true);
-        const response = await getPortfolioDriftStory(portfolioId);
-        setDrift(response.data);
+        const [driftRes, dashboardRes] = await Promise.all([
+          getPortfolioDriftStory(portfolioId),
+          getPortfolioDashboard(portfolioId)
+        ]);
+        setDrift(driftRes.data);
+        setDashboard(dashboardRes.data);
         setError(null);
       } catch (err) {
         setError('Unable to load drift story.');
@@ -36,8 +41,12 @@ const PortfolioDriftPage = ({ portfolioId }) => {
     try {
       setRefreshing(true);
       await refreshSnapshots(portfolioId);
-      const response = await getPortfolioDriftStory(portfolioId);
-      setDrift(response.data);
+      const [driftRes, dashboardRes] = await Promise.all([
+        getPortfolioDriftStory(portfolioId),
+        getPortfolioDashboard(portfolioId)
+      ]);
+      setDrift(driftRes.data);
+      setDashboard(dashboardRes.data);
       setError(null);
     } catch (err) {
       setError('Unable to refresh drift story.');
@@ -78,6 +87,21 @@ const PortfolioDriftPage = ({ portfolioId }) => {
   const driftValue = drift.driftValue ?? 0;
   const isPositive = driftPercent >= 0;
   const currency = drift.baseCurrency || '';
+
+  const buildPath = (points, width, height) => {
+    if (!points || points.length === 0) return '';
+    const values = points.map(p => Number(p.totalValue || 0));
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    return points
+      .map((point, index) => {
+        const x = (index / Math.max(points.length - 1, 1)) * width;
+        const y = height - ((Number(point.totalValue || 0) - min) / range) * height;
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
+  };
 
   return (
     <div className="drift-page">
@@ -144,23 +168,49 @@ const PortfolioDriftPage = ({ portfolioId }) => {
         />
       </div>
 
+      {drift.timeline && drift.timeline.length > 1 && (
+        <GlowCard className="drift-chart-card">
+          <h3>Value Journey</h3>
+          <p className="drift-chart-subtitle">
+            How your total portfolio value moved from the first snapshot to the latest.
+          </p>
+          <div className="drift-chart">
+            <svg viewBox="0 0 320 140" preserveAspectRatio="none">
+              <path
+                d={buildPath(drift.timeline, 300, 110)}
+                className="drift-chart-line"
+              />
+            </svg>
+            <div className="drift-chart-footer">
+              <span>{drift.initialDate}</span>
+              <span>{drift.latestDate}</span>
+            </div>
+          </div>
+        </GlowCard>
+      )}
+
       <GlowCard className="drift-story-card">
         <h3>Storyline</h3>
         <div className="drift-timeline">
           {(drift.timeline || []).map((entry, index) => {
-            const entryPercent = entry.driftPercentFromStart ?? 0;
+            const totalValue = Number(entry.totalValue || 0);
+            let entryPercent = 0;
+            const initial = Number(drift.initialValue || 0);
+            if (initial !== 0) {
+              entryPercent = ((totalValue - initial) / initial) * 100;
+            }
             const entryPositive = entryPercent >= 0;
             return (
-              <div key={`${entry.date}-${index}`} className="drift-entry">
+              <div key={`${entry.date || entry.snapshotDate}-${index}`} className="drift-entry">
                 <div className="drift-entry-marker"></div>
                 <div className="drift-entry-content">
                   <div className="drift-entry-header">
                     <span className="drift-entry-title">Chapter {index + 1}</span>
-                    <span className="drift-entry-date">{entry.date}</span>
+                    <span className="drift-entry-date">{entry.date || entry.snapshotDate}</span>
                   </div>
                   <p className="drift-entry-story">{entry.story}</p>
                   <div className="drift-entry-metrics">
-                    <span>{currency} {Number(entry.totalValue || 0).toFixed(2)}</span>
+                    <span>{currency} {totalValue.toFixed(2)}</span>
                     <span className={entryPositive ? 'positive' : 'negative'}>
                       {entryPositive ? '+' : '-'}{Number(Math.abs(entryPercent)).toFixed(2)}%
                     </span>
@@ -171,6 +221,40 @@ const PortfolioDriftPage = ({ portfolioId }) => {
           })}
         </div>
       </GlowCard>
+
+      {dashboard && dashboard.holdings && dashboard.holdings.length > 0 && (
+        <GlowCard className="drift-holdings-card">
+          <h3>Holdings vs Targets</h3>
+          <p className="drift-holdings-subtitle">
+            See which holdings are closest to or furthest from the value you planned for.
+          </p>
+          <div className="drift-holdings-table">
+            <div className="drift-holdings-header">
+              <span>Asset</span>
+              <span>Current</span>
+              <span>Target</span>
+              <span>Drift</span>
+            </div>
+            {dashboard.holdings.map((h) => {
+              if (h.targetValue == null) return null;
+              const driftAmount = Number(h.valueDrift || 0);
+              const driftPct = Number(h.valueDriftPercentage || 0);
+              const positive = driftAmount >= 0;
+              return (
+                <div key={h.holdingId} className="drift-holdings-row">
+                  <span className="drift-holdings-name">{h.assetName}</span>
+                  <span>{currency} {Number(h.currentValue || 0).toFixed(2)}</span>
+                  <span>{currency} {Number(h.targetValue || 0).toFixed(2)}</span>
+                  <span className={positive ? 'positive' : 'negative'}>
+                    {positive ? '+' : '-'}
+                    {Math.abs(driftPct).toFixed(2)}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </GlowCard>
+      )}
     </div>
   );
 };

@@ -480,6 +480,7 @@ public class PortfolioController {
                 holding.getQuantity(),
                 holding.getPurchasePrice(),
                 holding.getCurrentPrice(),
+                holding.getTargetValue(),
                 holding.getCurrency(),
                 holding.getPurchaseDate()
         );
@@ -494,6 +495,7 @@ public class PortfolioController {
         holding.setQuantity(dto.getQuantity());
         holding.setPurchasePrice(dto.getPurchasePrice());
         holding.setCurrentPrice(dto.getCurrentPrice());
+        holding.setTargetValue(dto.getTargetValue());
         holding.setCurrency(dto.getCurrency());
         holding.setPurchaseDate(dto.getPurchaseDate());
         return holding;

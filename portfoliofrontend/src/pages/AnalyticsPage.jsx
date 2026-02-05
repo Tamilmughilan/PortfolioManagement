@@ -310,4 +310,3 @@ const AnalyticsPage = ({ portfolioId }) => {
 };
 
 export default AnalyticsPage;
-

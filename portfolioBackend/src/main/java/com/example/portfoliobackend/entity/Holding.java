@@ -36,6 +36,9 @@ public class Holding {
     @Column(name = "current_price", nullable = false, precision = 15, scale = 2)
     private BigDecimal currentPrice;
 
+    @Column(name = "target_value", precision = 15, scale = 2)
+    private BigDecimal targetValue;
+
     @Column(length = 3)
     private String currency = "INR";
 
@@ -101,6 +104,14 @@ public class Holding {
 
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
+    }
+
+    public BigDecimal getTargetValue() {
+        return targetValue;
+    }
+
+    public void setTargetValue(BigDecimal targetValue) {
+        this.targetValue = targetValue;
     }
 
     public String getCurrency() {
