@@ -4,7 +4,8 @@ import {
   getAnalyticsSummary,
   getAllocationPercentages,
   getTargetDrift,
-  getTargets
+  getTargets,
+  getTrendForecast
 } from '../services/api';
 import StatCard from '../components/reactbits/StatCard';
 import GlowCard from '../components/reactbits/GlowCard';
@@ -16,6 +17,7 @@ const AnalyticsPage = ({ portfolioId }) => {
   const [allocations, setAllocations] = useState({});
   const [drift, setDrift] = useState({});
   const [targets, setTargets] = useState([]);
+  const [trend, setTrend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [demoMode, setDemoMode] = useState(false);
@@ -74,20 +76,41 @@ const AnalyticsPage = ({ portfolioId }) => {
         setError(null);
         setDemoMode(false);
 
-        const [summaryRes, allocRes, driftRes, targetsRes] = await Promise.all([
+        const [summaryRes, allocRes, driftRes, targetsRes, trendRes] = await Promise.all([
           getAnalyticsSummary(portfolioId),
           getAllocationPercentages(portfolioId),
           getTargetDrift(portfolioId),
-          getTargets(portfolioId)
+          getTargets(portfolioId),
+          getTrendForecast(portfolioId, 6)
         ]);
 
         setSummary(summaryRes.data);
         setAllocations(allocRes.data);
         setDrift(driftRes.data);
         setTargets(targetsRes.data);
+        setTrend(trendRes.data);
       } catch (err) {
         if (err?.response?.status === 500) {
           await loadDemoAnalytics();
+          setTrend({
+            portfolioId,
+            actual: [
+              { date: '2024-01-01', value: 120000 },
+              { date: '2024-02-01', value: 128000 },
+              { date: '2024-03-01', value: 135500 }
+            ],
+            forecast: [
+              { date: '2024-04-01', value: 142000 },
+              { date: '2024-05-01', value: 148500 },
+              { date: '2024-06-01', value: 154000 }
+            ],
+            movingAverage: [
+              { date: '2024-01-01', value: 120000 },
+              { date: '2024-02-01', value: 124000 },
+              { date: '2024-03-01', value: 127800 }
+            ],
+            narrative: 'Demo trend indicates gradual growth based on recent snapshots.'
+          });
         } else {
           setError('Failed to load analytics data');
           console.error(err);
@@ -116,6 +139,18 @@ const AnalyticsPage = ({ portfolioId }) => {
   const allocationEntries = Object.entries(allocations);
   const driftEntries = Object.entries(drift);
   const colors = ['#DC2626', '#E11D48', '#F97316', '#10b981', '#f59e0b', '#06b6d4'];
+  const buildTrendPath = (points, width, height) => {
+    if (!points || points.length === 0) return '';
+    const values = points.map(p => Number(p.value));
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    return points.map((point, index) => {
+      const x = (index / Math.max(points.length - 1, 1)) * width;
+      const y = height - ((Number(point.value) - min) / range) * height;
+      return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
+  };
 
   const getGainLossPercent = () => {
     if (!summary || summary.totalCost === 0) return 0;
@@ -302,6 +337,36 @@ const AnalyticsPage = ({ portfolioId }) => {
                 <span className="target-percent">{target.targetPercentage}%</span>
               </div>
             ))}
+          </div>
+        </GlowCard>
+      )}
+
+      {trend && (
+        <GlowCard className="analytics-card trend-card">
+          <h2>ML‑Lite Trend Forecast</h2>
+          <p className="trend-narrative">{trend.narrative}</p>
+          <div className="trend-chart">
+            <svg viewBox="0 0 300 140" preserveAspectRatio="none">
+              <path
+                d={buildTrendPath(trend.actual, 300, 120)}
+                className="trend-line actual"
+              />
+              {trend.movingAverage && (
+                <path
+                  d={buildTrendPath(trend.movingAverage, 300, 120)}
+                  className="trend-line moving"
+                />
+              )}
+              <path
+                d={buildTrendPath(trend.forecast, 300, 120)}
+                className="trend-line forecast"
+              />
+            </svg>
+          </div>
+          <div className="trend-legend">
+            <span><i className="dot actual"></i>Actual</span>
+            <span><i className="dot moving"></i>Moving Avg</span>
+            <span><i className="dot forecast"></i>Forecast</span>
           </div>
         </GlowCard>
       )}

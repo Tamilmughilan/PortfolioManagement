@@ -6,6 +6,7 @@ import com.example.portfoliobackend.dto.PortfolioDTO;
 import com.example.portfoliobackend.dto.PortfolioGoalDTO;
 import com.example.portfoliobackend.dto.PortfolioSnapshotDTO;
 import com.example.portfoliobackend.dto.PortfolioTargetDTO;
+import com.example.portfoliobackend.dto.TrendForecastDTO;
 import com.example.portfoliobackend.dto.WhatIfRequestDTO;
 import com.example.portfoliobackend.dto.WhatIfResponseDTO;
 import com.example.portfoliobackend.entity.Holding;
@@ -438,6 +439,18 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok(forecastService.runWhatIf(portfolioId, request));
+    }
+
+    @GetMapping("/{portfolioId}/forecast-trend")
+    public ResponseEntity<TrendForecastDTO> forecastTrend(
+            @PathVariable Long portfolioId,
+            @RequestParam(value = "months", required = false, defaultValue = "6") int months
+    ) {
+        if (portfolioService.getPortfolioById(portfolioId) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        int monthsAhead = Math.max(1, Math.min(months, 24));
+        return ResponseEntity.ok(forecastService.forecastTrend(portfolioId, monthsAhead));
     }
 
     public static class SnapshotRequest {

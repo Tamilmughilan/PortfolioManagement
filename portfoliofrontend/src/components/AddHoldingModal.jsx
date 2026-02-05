@@ -8,8 +8,6 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
     assetName: '',
     assetType: 'STOCK',
     quantity: '',
-    purchasePrice: '',
-    currentPrice: '',
     currency: 'INR',
     purchaseDate: new Date().toISOString().split('T')[0]
   });
@@ -36,22 +34,15 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
       setError('Quantity must be greater than 0');
       return;
     }
-    if (!formData.purchasePrice || parseFloat(formData.purchasePrice) <= 0) {
-      setError('Purchase price must be greater than 0');
-      return;
-    }
-    if (!formData.currentPrice || parseFloat(formData.currentPrice) <= 0) {
-      setError('Current price must be greater than 0');
-      return;
-    }
 
     try {
       setLoading(true);
       await addHolding(portfolioId, {
-        ...formData,
+        assetName: formData.assetName,
+        assetType: formData.assetType,
         quantity: parseFloat(formData.quantity),
-        purchasePrice: parseFloat(formData.purchasePrice),
-        currentPrice: parseFloat(formData.currentPrice)
+        currency: formData.currency,
+        purchaseDate: formData.purchaseDate
       });
       onSuccess();
       onClose();
@@ -137,35 +128,7 @@ const AddHoldingModal = ({ portfolioId, onClose, onSuccess }) => {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="purchasePrice">Purchase Price *</label>
-              <input
-                type="number"
-                id="purchasePrice"
-                name="purchasePrice"
-                value={formData.purchasePrice}
-                onChange={handleChange}
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="currentPrice">Current Price *</label>
-              <input
-                type="number"
-                id="currentPrice"
-                name="currentPrice"
-                value={formData.currentPrice}
-                onChange={handleChange}
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-              />
-            </div>
-          </div>
+          {/* Prices will be automatically filled by the system based on purchase date and current date */}
 
           <div className="form-group">
             <label htmlFor="purchaseDate">Purchase Date</label>
