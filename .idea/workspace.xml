@@ -5,27 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a5985b20-9554-434c-9968-298a71520f92" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/App.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/App.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/assets/react.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/HoldingCard.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/Navbar.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/ThemeToggle.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/hooks/useTheme.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/index.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/main.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/pages/DashboardPage.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/services/api.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Dashboard.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/HoldingCard.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/Navbar.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/vite.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/push_frontend_final.ps1" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/add_to_git.bat" beforeDir="false" afterPath="$PROJECT_DIR$/add_to_git.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/push_frontend.bat" beforeDir="false" afterPath="$PROJECT_DIR$/push_frontend.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/styles/HoldingCard.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/styles/HoldingCard.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,27 +16,28 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_C:/Users/Administrator/Desktop/Portfolio" value="39EjJeEDCw1vYUXiMF3eaPQdOiH" />
       <entry key="_C:/Users/Administrator/Downloads/Portfolio/PortfolioManagement/PortfolioManagement" value="39ASG0jMy6qGtkN6D24hWQ7BVyX" />
     </persistenceIdMap>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "tamilmughilane"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;tamilmughilane&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
-    "url": "https://github.com/Tamilmughilan/PortfolioManagement",
-    "accountId": "e138fb20-c754-4fe2-ba46-e22e229923c5"
+    "url": "https://github.com/Tamilmughilan/PortfolioManagement.git",
+    "accountId": "b128306a-6cd0-4f64-8b64-4c7d7175c508"
   }
 }]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="39ASG0jMy6qGtkN6D24hWQ7BVyX" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -62,16 +45,38 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.PortfolioBackendApplication.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Frontendchange",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Administrator/Downloads/Portfolio/PortfolioManagement/PortfolioManagement",
+    "last_opened_file_path": "C:/Users/Administrator/Desktop/Portfolio",
     "run.code.analysis.last.selected.profile": "pProject Default"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="PortfolioBackendApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.example.portfoliobackend.PortfolioBackendApplication" />
+      <module name="portfolioBackend" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.portfoliobackend.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.PortfolioBackendApplication" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="a5985b20-9554-434c-9968-298a71520f92" name="Changes" comment="" />

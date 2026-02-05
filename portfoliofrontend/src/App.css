@@ -1,34 +1,51 @@
 :root {
-  --primary: #DC2626;
-  --primary-dark: #B91C1C;
+  --primary: #B91C1C; /* deep red for accents */
+  --primary-dark: #8B0000;
   --secondary: #E11D48;
   --accent: #F97316;
-  --bg-light: #FEF2F2;
+  /* Keep backgrounds white */
+  --bg-light: #ffffff;
   --bg-white: #ffffff;
-  --text-dark: #1C1917;
-  --text-light: #78716C;
-  --border: #FEE2E2;
-  --shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.08), 0 2px 4px -1px rgba(220, 38, 38, 0.04);
-  --shadow-lg: 0 20px 40px -12px rgba(220, 38, 38, 0.15);
+  /* Light mode: black for primary text, gray for secondary */
+  --text-dark: #000000; /* all main text black */
+  --text-light: #374151; /* muted gray for secondary text */
+  --border: rgba(0, 0, 0, 0.06);
+  --shadow: 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.06);
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
 }
 
 [data-theme="dark"] {
-  --bg-light: #1C1917;
-  --bg-white: #292524;
-  --text-dark: #FAFAF9;
-  --text-light: #A8A29E;
-  --border: #44403C;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  --bg-light: #000000; /* page background: black */
+  --bg-white: #0b0b0b; /* card/panel background: very dark gray */
+  --text-dark: #ffffff; /* main text: white */
+  --text-light: #bdbdbd; /* muted text: light gray */
+  --border: rgba(255, 255, 255, 0.06);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+  /* keep primary red for accents/active text */
+  --primary: #B91C1C;
 }
 
+/* Remove rounded corners globally to satisfy "no rounded corners" requirement */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  border-radius: 0 !important;
+}
+
+/* Remove hover animations and transitions to create a plain, professional UI */
+* {
+  transition: none !important;
+}
+
+*:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  animation: none !important;
 }
 
 body {
@@ -118,35 +135,46 @@ body {
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }
 
-/* Action Buttons */
+/* Action Buttons: neutral black text on white background by default */
 .action-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   border: 1px solid var(--border);
   background: var(--bg-white);
   color: var(--text-dark);
 }
 
 .action-btn:hover {
-  background: var(--bg-light);
+  background: rgba(0,0,0,0.02);
+  color: var(--text-dark);
 }
 
-.action-btn.add-btn {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
-  border: none;
+/* Primary CTA and selected nav/button: red filled */
+.action-btn.add-btn,
+.btn-primary {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border: 1px solid var(--primary) !important;
 }
 
-.action-btn.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+/* Selected button utility (applied to selected nav items) */
+.btn-selected {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border: 1px solid var(--primary) !important;
+}
+
+/* Secondary buttons: white background, black text */
+.btn-secondary,
+.action-btn:not(.add-btn) {
+  background: var(--bg-white);
+  color: var(--text-dark);
+  border: 1px solid var(--border);
 }
 
 .action-btn.refresh-btn {
@@ -168,20 +196,13 @@ body {
 }
 
 .theme-toggle {
-  background: var(--bg-light);
-  border: 1px solid var(--border);
-  padding: 0.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: var(--bg-white);
   color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--primary);
 }
 
 .theme-toggle:hover {
-  background: var(--border);
+  background: rgba(185,28,28,0.06);
 }
 
 /* Page Content */
@@ -236,7 +257,7 @@ body {
   justify-content: center;
   padding: 4rem 2rem;
   background: var(--bg-white);
-  border-radius: 16px;
+  /* removed radius via global rule */
   text-align: center;
   box-shadow: var(--shadow);
 }
@@ -252,6 +273,35 @@ body {
 .no-portfolio p {
   color: var(--text-light);
   max-width: 400px;
+}
+
+/* Ensure cards and panels remain white with deep red text */
+.glow-card,
+.glowcard,
+.glowCard,
+.GlowCard,
+.Glowcard,
+.glow-card * {
+  background: var(--bg-white) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Ensure headings and body text use black in light mode */
+h1, h2, h3, h4, h5, h6, p, span, label, button, a {
+  color: var(--text-dark) !important;
+}
+
+/* Nav active: in light mode use filled red (btn-selected applied by component) */
+.nav-item.active {
+  color: #fff !important;
+  background: var(--primary) !important;
+  border-left: none !important;
+}
+
+/* For consistency, when nav-item has .btn-selected, show filled red */
+.nav-item.btn-selected {
+  background: var(--primary) !important;
+  color: #fff !important;
 }
 
 /* Responsive */

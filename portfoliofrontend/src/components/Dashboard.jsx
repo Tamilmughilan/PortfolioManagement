@@ -8,6 +8,7 @@ import GlowCard from './reactbits/GlowCard';
 import SkeletonCard from './reactbits/SkeletonCard';
 import SectionHeader from './reactbits/SectionHeader';
 import '../styles/Dashboard.css';
+import { formatWithSymbol } from '../utils/currency';
 
 const Dashboard = ({ portfolioId }) => {
   const [portfolio, setPortfolio] = useState(null);
@@ -85,31 +86,32 @@ const Dashboard = ({ portfolioId }) => {
   const totalGainLoss = holdings.reduce((sum, h) => sum + (h.gainLoss || 0), 0);
   const totalInvested = holdings.reduce((sum, h) => sum + (h.totalInvested || 0), 0);
   const totalGainLossPercent = totalInvested > 0 ? (totalGainLoss / totalInvested) * 100 : 0;
+  const currency = portfolio.baseCurrency || '';
 
   return (
     <div className="dashboard">
       <SectionHeader
         title={portfolio.portfolioName}
-        subtitle={`${portfolio.baseCurrency} • Since ${new Date(portfolio.createdAt).toLocaleDateString()}`}
+        subtitle={`${currency} • Since ${new Date(portfolio.createdAt).toLocaleDateString()}`}
         icon={<DollarSign size={22} />}
       />
 
       <div className="stats-grid">
         <StatCard
           label="Total Value"
-          value={`${portfolio.baseCurrency} ${parseFloat(portfolio.totalValue || 0).toFixed(2)}`}
+          value={formatWithSymbol(currency, portfolio.totalValue)}
           subtext="Current portfolio value"
           icon={<DollarSign size={20} />}
         />
         <StatCard
           label="Total Invested"
-          value={`${portfolio.baseCurrency} ${totalInvested.toFixed(2)}`}
+          value={formatWithSymbol(currency, totalInvested)}
           subtext="Cost basis"
           icon={<Layers size={20} />}
         />
         <StatCard
           label="Gain / Loss"
-          value={`${portfolio.baseCurrency} ${Math.abs(totalGainLoss).toFixed(2)}`}
+          value={formatWithSymbol(currency, Math.abs(totalGainLoss))}
           subtext={`${totalGainLossPercent.toFixed(2)}%`}
           icon={totalGainLoss >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
           trend={totalGainLoss >= 0 ? 'positive' : 'negative'}
@@ -129,13 +131,13 @@ const Dashboard = ({ portfolioId }) => {
         ) : holdings.length <= 3 ? (
           <div className="holdings-grid">
             {holdings.map(holding => (
-              <HoldingCard key={holding.holdingId} holding={holding} currency={portfolio.baseCurrency} />
+              <HoldingCard key={holding.holdingId} holding={holding} currency={currency} />
             ))}
           </div>
         ) : (
           <Carousel itemsPerView={3} autoPlay autoPlayInterval={5500} className="rb-carousel">
             {holdings.map(holding => (
-              <HoldingCard key={holding.holdingId} holding={holding} currency={portfolio.baseCurrency} />
+              <HoldingCard key={holding.holdingId} holding={holding} currency={currency} />
             ))}
           </Carousel>
         )}
