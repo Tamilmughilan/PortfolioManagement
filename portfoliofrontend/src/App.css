@@ -1,30 +1,32 @@
 :root {
-  --primary: #DC2626;
-  --primary-dark: #B91C1C;
+  --primary: #B91C1C; /* deep red for accents */
+  --primary-dark: #8B0000;
   --secondary: #E11D48;
   --accent: #F97316;
-  /* Use pure white background for a red & white theme */
+  /* Keep backgrounds white */
   --bg-light: #ffffff;
   --bg-white: #ffffff;
-  /* Make primary text use the deep red for a red/white look */
-  --text-dark: #B91C1C;
-  --text-light: #8B1A1A;
-  --border: rgba(220, 38, 38, 0.08);
-  --shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.06), 0 2px 4px -1px rgba(220, 38, 38, 0.03);
-  --shadow-lg: 0 20px 40px -12px rgba(220, 38, 38, 0.12);
+  /* Make text a light red color as requested */
+  --text-dark: #F87171; /* light red for primary text */
+  --text-light: #F87171; /* use same light red for consistency */
+  --border: rgba(185, 28, 28, 0.08);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 40px -12px rgba(0,0,0,0.06);
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
 }
 
 [data-theme="dark"] {
-  --bg-light: #111111;
-  --bg-white: #1c1c1c;
-  --text-dark: #FFD6D6; /* light pinkish text on dark theme */
-  --text-light: #FFBABA;
-  --border: #2b0f0f;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+  --bg-light: #000000; /* page background: black */
+  --bg-white: #0b0b0b; /* card/panel background: very dark gray */
+  --text-dark: #ffffff; /* main text: white */
+  --text-light: #bdbdbd; /* muted text: light gray */
+  --border: rgba(255, 255, 255, 0.06);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+  /* keep primary red for accents/active text */
+  --primary: #B91C1C;
 }
 
 /* Remove rounded corners globally to satisfy "no rounded corners" requirement */
@@ -139,18 +141,23 @@ body {
 }
 
 .action-btn:hover {
-  background: var(--bg-light);
+  background: rgba(185,28,28,0.06);
+  color: var(--text-dark);
+  box-shadow: none;
+  transform: none;
 }
 
 .action-btn.add-btn {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white;
-  border: none;
+  /* use white button with red border/text instead of red filled */
+  background: var(--bg-white);
+  color: var(--text-dark);
+  border: 1px solid var(--primary);
 }
 
 .action-btn.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
+  background: rgba(185,28,28,0.08);
+  color: var(--text-dark);
+  box-shadow: none;
 }
 
 .action-btn.refresh-btn {
@@ -172,20 +179,13 @@ body {
 }
 
 .theme-toggle {
-  background: var(--bg-light);
-  border: 1px solid var(--border);
-  padding: 0.5rem;
-  /* no radius */
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: var(--bg-white);
   color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid var(--primary);
 }
 
 .theme-toggle:hover {
-  background: var(--border);
+  background: rgba(185,28,28,0.06);
 }
 
 /* Page Content */
@@ -256,6 +256,42 @@ body {
 .no-portfolio p {
   color: var(--text-light);
   max-width: 400px;
+}
+
+/* Ensure cards and panels remain white with deep red text */
+.glow-card,
+.glowcard,
+.glowCard,
+.GlowCard,
+.Glowcard,
+.glow-card * {
+  background: var(--bg-white) !important;
+  color: var(--text-dark) !important;
+}
+
+/* Ensure headings and body text use light red */
+h1, h2, h3, h4, h5, h6, p, span, label, button, a {
+  color: var(--text-dark) !important;
+}
+
+/* Selected button styles: red background with white text for CTAs */
+.btn-selected {
+  background: var(--primary);
+  color: #fff !important;
+  border: 1px solid var(--primary) !important;
+}
+
+/* Ensure nav active remains red text (highlight) in light mode as well */
+.nav-item.active {
+  color: var(--primary) !important;
+  background: transparent !important;
+  border-left: none !important;
+}
+
+/* For consistency, when nav-item has .btn-selected, show filled red */
+.nav-item.btn-selected {
+  background: var(--primary) !important;
+  color: #fff !important;
 }
 
 /* Responsive */

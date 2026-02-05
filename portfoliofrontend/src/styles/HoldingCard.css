@@ -1,25 +1,25 @@
 .holding-card {
   background: var(--bg-white);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 1.5rem;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  animation: holdingCardSlideIn 0.5s ease forwards;
+  animation: holdingCardSlideIn 0.35s ease forwards;
   opacity: 0;
 }
 
 @keyframes holdingCardSlideIn {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -29,71 +29,40 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  opacity: 0.8;
+  height: 6px;
+  opacity: 1;
+  /* make accent neutral instead of colored */
+  background: var(--border);
 }
 
-.holding-card.stock::before {
-  background: linear-gradient(90deg, #DC2626, #E11D48);
-}
-
-.holding-card.bond::before {
-  background: linear-gradient(90deg, #10b981, #34d399);
-}
-
-.holding-card.mutual_fund::before {
-  background: linear-gradient(90deg, #f59e0b, #fbbf24);
-}
-
-.holding-card.etf::before {
-  background: linear-gradient(90deg, #06b6d4, #22d3ee);
-}
-
-.holding-card.crypto::before {
-  background: linear-gradient(90deg, #f97316, #fb923c);
-}
-
-.holding-card.gold::before {
-  background: linear-gradient(90deg, #eab308, #facc15);
-}
-
-.holding-card.cash::before {
-  background: linear-gradient(90deg, #64748b, #94a3b8);
-}
-
+/* remove per-asset gradients - use neutral border instead */
+.holding-card.stock::before,
+.holding-card.bond::before,
+.holding-card.mutual_fund::before,
+.holding-card.etf::before,
+.holding-card.crypto::before,
+.holding-card.gold::before,
+.holding-card.cash::before,
 .holding-card.real_estate::before {
-  background: linear-gradient(90deg, #84cc16, #a3e635);
+  background: var(--border);
 }
 
 .holding-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: var(--shadow-lg);
+  transform: none;
+  box-shadow: var(--shadow);
 }
 
-.holding-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
-  gap: 0.5rem;
-}
-
-.holding-name h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 0.25rem;
-}
-
+/* neutralize asset type badge */
 .asset-type {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-light);
   font-weight: 500;
-  background: var(--bg-light);
+  background: transparent;
   padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 0;
+  border: 1px solid var(--border);
 }
 
 .gain-loss-badge {
@@ -101,20 +70,13 @@
   align-items: center;
   gap: 0.35rem;
   padding: 0.35rem 0.75rem;
-  border-radius: 20px;
+  border-radius: 0;
   font-size: 0.85rem;
   font-weight: 600;
   white-space: nowrap;
-}
-
-.gain-loss-badge.positive {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
-}
-
-.gain-loss-badge.negative {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
+  background: var(--bg-light);
+  color: var(--text-dark);
+  border: 1px solid var(--border);
 }
 
 .holding-body {
@@ -176,16 +138,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  border-radius: 10px;
+  border-radius: 0;
   margin-bottom: 0.75rem;
-}
-
-.holding-gain-loss.positive {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
-}
-
-.holding-gain-loss.negative {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(248, 113, 113, 0.1));
+  background: var(--bg-light);
+  border: 1px solid var(--border);
 }
 
 .holding-gain-loss .label {
@@ -198,14 +154,12 @@
 .holding-gain-loss .value {
   font-size: 1.1rem;
   font-weight: 700;
+  color: var(--text-dark);
 }
 
-.holding-gain-loss.positive .value {
-  color: var(--success);
-}
-
+.holding-gain-loss.positive .value,
 .holding-gain-loss.negative .value {
-  color: var(--danger);
+  color: var(--text-dark);
 }
 
 .holding-date {
