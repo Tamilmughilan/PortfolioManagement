@@ -39,7 +39,7 @@
   padding: 1.5rem;
   border-radius: 16px;
   box-shadow: var(--shadow);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -97,11 +97,11 @@
 }
 
 .stat-card.gain-loss.positive {
-  border-left: 4px solid var(--success);
+  border: none;
 }
 
 .stat-card.gain-loss.negative {
-  border-left: 4px solid var(--danger);
+  border: none;
 }
 
 .stat-label {

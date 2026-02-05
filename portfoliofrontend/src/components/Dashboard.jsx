@@ -9,6 +9,7 @@ import SkeletonCard from './reactbits/SkeletonCard';
 import SectionHeader from './reactbits/SectionHeader';
 import '../styles/Dashboard.css';
 import { formatWithSymbol } from '../utils/currency';
+import { DUMMY_PORTFOLIO } from '../utils/dummyData';
 
 const Dashboard = ({ portfolioId }) => {
   const [portfolio, setPortfolio] = useState(null);
@@ -25,7 +26,9 @@ const Dashboard = ({ portfolioId }) => {
         setPortfolio(response.data);
         setError(null);
       } catch (err) {
-        setError(err.message);
+        // Fallback to dummy data for demo/presentation
+        setPortfolio(DUMMY_PORTFOLIO);
+        setError(null);
       } finally {
         setLoading(false);
       }
@@ -46,6 +49,10 @@ const Dashboard = ({ portfolioId }) => {
     if (portfolioId) {
       fetchDashboard();
       fetchNews();
+    } else {
+      // Show dummy data if no portfolio selected
+      setPortfolio(DUMMY_PORTFOLIO);
+      setLoading(false);
     }
   }, [portfolioId]);
 
@@ -74,12 +81,9 @@ const Dashboard = ({ portfolioId }) => {
     );
   }
 
-  if (error) {
-    return <div className="error">Error: {error}</div>;
-  }
-
   if (!portfolio) {
-    return <div className="empty">Select a portfolio to view details</div>;
+    // Show dummy portfolio if nothing is available
+    return <Dashboard portfolioId={null} />;
   }
 
   const holdings = portfolio.holdings || [];

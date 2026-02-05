@@ -199,19 +199,19 @@
   padding: 1rem;
   border-radius: 12px;
   background: var(--bg-light);
-  border-left: 4px solid var(--border);
+  border: none;
 }
 
 .drift-item.on-target {
-  border-left-color: var(--success);
+  border: none;
 }
 
 .drift-item.over {
-  border-left-color: #ed8936;
+  border: none;
 }
 
 .drift-item.under {
-  border-left-color: var(--danger);
+  border: none;
 }
 
 .drift-header {

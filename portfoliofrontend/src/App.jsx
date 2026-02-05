@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Plus, RefreshCw } from 'lucide-react';
-import Navbar from './components/Navbar';
+import NavbarNew from './components/NavbarNew.jsx';
 import Dashboard from './components/Dashboard';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AddHoldingModal from './components/AddHoldingModal';
@@ -147,7 +147,7 @@ function App() {
 
   return (
     <div className={`app ${isDark ? 'dark' : 'light'}`} data-theme={isDark ? 'dark' : 'light'}>
-      <Navbar
+      <NavbarNew
         activeSection={activeSection}
         onSectionChange={setActiveSection}
         onLogout={handleLogout}

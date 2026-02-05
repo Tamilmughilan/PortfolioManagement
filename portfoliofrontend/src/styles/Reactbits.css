@@ -1,7 +1,7 @@
 /* Reactbits-inspired UI atoms (red/white palette) */
 .rb-card {
   background: var(--bg-white);
-  border: 1px solid var(--border);
+  border: 5px solid rgba(0, 0, 0, 0.15);
   border-radius: 0; /* removed rounding */
   box-shadow: var(--shadow);
   padding: 1.5rem;
@@ -28,15 +28,15 @@
 }
 
 .rb-accent-primary {
-  border-left: 4px solid var(--primary);
+  border: none;
 }
 
 .rb-accent-secondary {
-  border-left: 4px solid var(--secondary);
+  border: none;
 }
 
 .rb-accent-muted {
-  border-left: 4px solid var(--border);
+  border: none;
 }
 
 .rb-section-header {

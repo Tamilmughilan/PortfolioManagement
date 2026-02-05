@@ -1,7 +1,7 @@
 :root {
-  --primary: #B91C1C; /* deep red for accents */
-  --primary-dark: #8B0000;
-  --secondary: #E11D48;
+  --primary: #fc3d3d; /* deep red for accents */
+  --primary-dark: #fc3d3d;
+  --secondary: #fc3d3d;
   --accent: #F97316;
   /* Keep backgrounds white */
   --bg-light: #ffffff;
@@ -18,13 +18,13 @@
 }
 
 [data-theme="dark"] {
-  --bg-light: #000000; /* page background: black */
-  --bg-white: #0b0b0b; /* card/panel background: very dark gray */
-  --text-dark: #ffffff; /* main text: white */
-  --text-light: #bdbdbd; /* muted text: light gray */
-  --border: rgba(255, 255, 255, 0.06);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
-  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+  --bg-light: #1a1a1a; /* page background: dark grey (lighter than pure black) */
+  --bg-white: #2a2a2a; /* card/panel background: medium dark grey */
+  --text-dark: #f0f0f0; /* main text: off-white */
+  --text-light: #b0b0b0; /* muted text: medium grey */
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
   /* keep primary red for accents/active text */
   --primary: #B91C1C;
 }
@@ -75,10 +75,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--bg-white);
-  border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  padding: 0.75rem 2rem;
+  background-color: transparent;
+  border-bottom: none;
+  box-shadow: none;
   gap: 1rem;
   flex-wrap: wrap;
 }
@@ -111,7 +111,7 @@ body {
 
 .selector-group select {
   padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 8px;
   background-color: var(--bg-white);
   color: var(--text-dark);
@@ -196,13 +196,18 @@ body {
 }
 
 .theme-toggle {
-  background: var(--bg-white);
+  background: transparent;
   color: var(--text-dark);
-  border: 1px solid var(--primary);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
 }
 
 .theme-toggle:hover {
-  background: rgba(185,28,28,0.06);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Page Content */

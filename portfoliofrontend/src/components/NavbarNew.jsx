@@ -2,9 +2,9 @@ import React from 'react';
 import { BarChart3, DollarSign, TrendingUp, TrendingDown, LogOut, Home, UserCircle2, Target, Layers } from 'lucide-react';
 import '../styles/Navbar.css';
 
-const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
+const NavbarNew = ({ activeSection, onSectionChange, onLogout, user }) => {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'portfolio', label: 'Portfolio', icon: BarChart3 },
     { id: 'assets', label: 'Assets', icon: DollarSign },
     { id: 'performance', label: 'Performance', icon: TrendingUp },
@@ -36,17 +36,20 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
       )}
 
       <ul className="navbar-menu">
-        {navItems.map(item => (
-          <li key={item.id}>
-            <button
-              className={`nav-item ${activeSection === item.id ? 'active btn-selected' : ''}`}
-              onClick={() => onSectionChange(item.id)}
-            >
-              <item.icon size={20} />
-              <span>{item.label}</span>
-            </button>
-          </li>
-        ))}
+        {navItems.map(item => {
+          const Icon = item.icon;
+          return (
+            <li key={item.id}>
+              <button
+                className={`nav-item ${activeSection === item.id ? 'active btn-selected' : ''}`}
+                onClick={() => onSectionChange(item.id)}
+              >
+                <Icon size={20} />
+                <span>{item.label}</span>
+              </button>
+            </li>
+          );
+        })}
       </ul>
 
       <div className="navbar-footer">
@@ -63,4 +66,4 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
   );
 };
 
-export default Navbar;
+export default NavbarNew;
