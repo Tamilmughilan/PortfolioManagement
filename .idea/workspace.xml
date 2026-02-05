@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a5985b20-9554-434c-9968-298a71520f92" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/portfoliofrontend/src/utils/currency.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/components/HoldingCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/HoldingCard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/components/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/pages/PortfolioDriftPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/pages/PortfolioDriftPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/portfoliofrontend/src/pages/PortfolioManagerPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/portfoliofrontend/src/pages/PortfolioManagerPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
