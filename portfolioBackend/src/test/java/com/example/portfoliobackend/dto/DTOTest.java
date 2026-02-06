@@ -627,34 +627,39 @@ class DTOTest {
 
         @Test
         void testAllArgsConstructor() {
-            AuthResponseDTO dto = new AuthResponseDTO(1L, "testuser", "test@example.com", "USD", "token123");
+            LocalDateTime createdAt = LocalDateTime.now();
+            AuthResponseDTO dto = new AuthResponseDTO(1L, "testuser", "test@example.com", "USD", createdAt);
             
             assertThat(dto.getUserId()).isEqualTo(1L);
             assertThat(dto.getUsername()).isEqualTo("testuser");
             assertThat(dto.getEmail()).isEqualTo("test@example.com");
             assertThat(dto.getDefaultCurrency()).isEqualTo("USD");
-            assertThat(dto.getToken()).isEqualTo("token123");
+            assertThat(dto.getCreatedAt()).isEqualTo(createdAt);
         }
 
         @Test
         void testGettersAndSetters() {
+            LocalDateTime createdAt = LocalDateTime.now();
             AuthResponseDTO dto = new AuthResponseDTO();
             dto.setUserId(1L);
             dto.setUsername("user");
             dto.setEmail("user@example.com");
             dto.setDefaultCurrency("INR");
-            dto.setToken("token456");
+            dto.setCreatedAt(createdAt);
 
             assertThat(dto.getUserId()).isEqualTo(1L);
-            assertThat(dto.getToken()).isEqualTo("token456");
+            assertThat(dto.getUsername()).isEqualTo("user");
+            assertThat(dto.getEmail()).isEqualTo("user@example.com");
+            assertThat(dto.getDefaultCurrency()).isEqualTo("INR");
+            assertThat(dto.getCreatedAt()).isEqualTo(createdAt);
         }
 
         @Test
-        void testWithNullToken() {
+        void testWithNullCreatedAt() {
             AuthResponseDTO dto = new AuthResponseDTO();
-            dto.setToken(null);
+            dto.setCreatedAt(null);
 
-            assertThat(dto.getToken()).isNull();
+            assertThat(dto.getCreatedAt()).isNull();
         }
     }
 
@@ -898,21 +903,9 @@ class DTOTest {
         }
 
         @Test
-        void testAllArgsConstructor() {
-            LocalDate date = LocalDate.now().plusYears(2);
-            WhatIfRequestDTO dto = new WhatIfRequestDTO(new BigDecimal("500"), 
-                    new BigDecimal("8.0"), 24, date);
-            
-            assertThat(dto.getMonthlyContribution()).isEqualByComparingTo(new BigDecimal("500"));
-            assertThat(dto.getExpectedAnnualReturn()).isEqualByComparingTo(new BigDecimal("8.0"));
-            assertThat(dto.getMonths()).isEqualTo(24);
-            assertThat(dto.getTargetDate()).isEqualTo(date);
-        }
-
-        @Test
         void testGettersAndSetters() {
-            WhatIfRequestDTO dto = new WhatIfRequestDTO();
             LocalDate date = LocalDate.now().plusMonths(12);
+            WhatIfRequestDTO dto = new WhatIfRequestDTO();
             
             dto.setMonthlyContribution(new BigDecimal("1000"));
             dto.setExpectedAnnualReturn(new BigDecimal("7.5"));
@@ -920,7 +913,9 @@ class DTOTest {
             dto.setTargetDate(date);
 
             assertThat(dto.getMonthlyContribution()).isEqualByComparingTo(new BigDecimal("1000"));
+            assertThat(dto.getExpectedAnnualReturn()).isEqualByComparingTo(new BigDecimal("7.5"));
             assertThat(dto.getMonths()).isEqualTo(12);
+            assertThat(dto.getTargetDate()).isEqualTo(date);
         }
 
         @Test
