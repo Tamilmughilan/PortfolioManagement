@@ -727,33 +727,33 @@ class DTOTest {
 
         @Test
         void testAllArgsConstructor() {
-            ChatResponseDTO dto = new ChatResponseDTO("This is a response");
+            ChatResponseDTO dto = new ChatResponseDTO("This is a reply");
             
-            assertThat(dto.getResponse()).isEqualTo("This is a response");
+            assertThat(dto.getReply()).isEqualTo("This is a reply");
         }
 
         @Test
         void testGettersAndSetters() {
             ChatResponseDTO dto = new ChatResponseDTO();
-            dto.setResponse("Another response");
+            dto.setReply("Another reply");
 
-            assertThat(dto.getResponse()).isEqualTo("Another response");
+            assertThat(dto.getReply()).isEqualTo("Another reply");
         }
 
         @Test
-        void testWithNullResponse() {
+        void testWithNullReply() {
             ChatResponseDTO dto = new ChatResponseDTO();
-            dto.setResponse(null);
+            dto.setReply(null);
 
-            assertThat(dto.getResponse()).isNull();
+            assertThat(dto.getReply()).isNull();
         }
 
         @Test
-        void testWithEmptyResponse() {
+        void testWithEmptyReply() {
             ChatResponseDTO dto = new ChatResponseDTO();
-            dto.setResponse("");
+            dto.setReply("");
 
-            assertThat(dto.getResponse()).isEmpty();
+            assertThat(dto.getReply()).isEmpty();
         }
     }
 
@@ -961,7 +961,7 @@ class DTOTest {
                     endDate
             );
             
-            assertThat(dto.getCurrentValue()).isEqualByComparingTo(new BigDecimal("10000"));
+            assertThat(dto.getStartingValue()).isEqualByComparingTo(new BigDecimal("10000"));
             assertThat(dto.getProjectedValue()).isEqualByComparingTo(new BigDecimal("20000"));
             assertThat(dto.getMonths()).isEqualTo(24);
             assertThat(dto.getEndDate()).isEqualTo(endDate);
@@ -972,7 +972,7 @@ class DTOTest {
             WhatIfResponseDTO dto = new WhatIfResponseDTO();
             LocalDate endDate = LocalDate.now().plusMonths(12);
             
-            dto.setCurrentValue(new BigDecimal("15000"));
+            dto.setStartingValue(new BigDecimal("15000"));
             dto.setProjectedValue(new BigDecimal("25000"));
             dto.setMonths(12);
             dto.setExpectedAnnualReturn(new BigDecimal("7.5"));
@@ -980,7 +980,7 @@ class DTOTest {
             dto.setNarrative("Test narrative");
             dto.setEndDate(endDate);
 
-            assertThat(dto.getCurrentValue()).isEqualByComparingTo(new BigDecimal("15000"));
+            assertThat(dto.getStartingValue()).isEqualByComparingTo(new BigDecimal("15000"));
             assertThat(dto.getMonths()).isEqualTo(12);
         }
 

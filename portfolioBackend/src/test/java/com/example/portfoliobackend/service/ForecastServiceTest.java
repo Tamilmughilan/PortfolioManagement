@@ -153,7 +153,7 @@ class ForecastServiceTest {
             WhatIfResponseDTO result = forecastService.runWhatIf(1L, request);
 
             assertThat(result).isNotNull();
-            assertThat(result.getCurrentValue()).isEqualByComparingTo(new BigDecimal("100000"));
+            assertThat(result.getStartingValue()).isEqualByComparingTo(new BigDecimal("100000"));
             assertThat(result.getMonths()).isEqualTo(24);
             assertThat(result.getMonthlyContribution()).isEqualByComparingTo(new BigDecimal("1000"));
             assertThat(result.getProjectedValue()).isNotNull();
@@ -286,6 +286,7 @@ class ForecastServiceTest {
             WhatIfResponseDTO result = forecastService.runWhatIf(1L, request);
 
             assertThat(result.getMonths()).isEqualTo(0);
+            assertThat(result.getStartingValue()).isEqualByComparingTo(new BigDecimal("100000"));
             assertThat(result.getProjectedValue()).isEqualByComparingTo(new BigDecimal("100000"));
         }
 
