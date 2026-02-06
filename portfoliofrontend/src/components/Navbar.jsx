@@ -18,8 +18,8 @@ const Navbar = ({ activeSection, onSectionChange, onLogout, user }) => {
     <nav className="navbar">
       <div className="navbar-header">
         <div className="navbar-logo">
-          <BarChart3 size={24} />
-          <span>Portfolio Manager</span>
+          <img src="/penguin.png" alt="Penguin Capital" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+          <span>Penguin Capital</span>
         </div>
       </div>
 

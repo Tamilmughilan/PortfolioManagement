@@ -59,9 +59,9 @@ class AnalyticsControllerTest {
 
         mockMvc.perform(get("/api/analytics/portfolios/1/summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalMarketValue", is(10000.00)))
-                .andExpect(jsonPath("$.totalCost", is(8000.00)))
-                .andExpect(jsonPath("$.totalGainLoss", is(2000.00)));
+                .andExpect(jsonPath("$.totalMarketValue").value(10000.00))
+                .andExpect(jsonPath("$.totalCost").value(8000.00))
+                .andExpect(jsonPath("$.totalGainLoss").value(2000.00));
 
         verify(portfolioService, times(1)).getPortfolioById(1L);
         verify(analyticsService, times(1)).getTotalMarketValue(1L);
@@ -90,8 +90,8 @@ class AnalyticsControllerTest {
 
         mockMvc.perform(get("/api/analytics/portfolios/1/allocations"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.STOCK", is(6000.00)))
-                .andExpect(jsonPath("$.BOND", is(4000.00)));
+                .andExpect(jsonPath("$.STOCK").value(6000.00))
+                .andExpect(jsonPath("$.BOND").value(4000.00));
     }
 
     @Test
@@ -115,8 +115,8 @@ class AnalyticsControllerTest {
 
         mockMvc.perform(get("/api/analytics/portfolios/1/allocation-percentages"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.STOCK", is(60.00)))
-                .andExpect(jsonPath("$.BOND", is(40.00)));
+                .andExpect(jsonPath("$.STOCK").value(60.00))
+                .andExpect(jsonPath("$.BOND").value(40.00));
     }
 
     @Test
@@ -140,8 +140,8 @@ class AnalyticsControllerTest {
 
         mockMvc.perform(get("/api/analytics/portfolios/1/target-drift"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.STOCK", is(-5.00)))
-                .andExpect(jsonPath("$.BOND", is(5.00)));
+                .andExpect(jsonPath("$.STOCK").value(-5.00))
+                .andExpect(jsonPath("$.BOND").value(5.00));
     }
 
     @Test
@@ -163,9 +163,9 @@ class AnalyticsControllerTest {
 
         mockMvc.perform(get("/api/analytics/portfolios/1/summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalMarketValue", is(0)))
-                .andExpect(jsonPath("$.totalCost", is(0)))
-                .andExpect(jsonPath("$.totalGainLoss", is(0)));
+                .andExpect(jsonPath("$.totalMarketValue").value(0))
+                .andExpect(jsonPath("$.totalCost").value(0))
+                .andExpect(jsonPath("$.totalGainLoss").value(0));
     }
 
     @Test
@@ -177,5 +177,60 @@ class AnalyticsControllerTest {
         mockMvc.perform(get("/api/analytics/portfolios/1/allocations"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", anEmptyMap()));
+    }
+    
+    @Test
+    @DisplayName("GET /api/analytics/portfolios/{id}/allocation-percentages - Should return empty map when no holdings")
+    void getAllocationPercentages_WhenNoHoldings_ShouldReturnEmptyMap() throws Exception {
+        when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
+        when(analyticsService.getAllocationPercentages(1L)).thenReturn(new HashMap<>());
+
+        mockMvc.perform(get("/api/analytics/portfolios/1/allocation-percentages"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", anEmptyMap()));
+    }
+    
+    @Test
+    @DisplayName("GET /api/analytics/portfolios/{id}/target-drift - Should return empty map when no targets")
+    void getTargetDrift_WhenNoTargets_ShouldReturnEmptyMap() throws Exception {
+        when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
+        when(analyticsService.getTargetDriftPercentages(1L)).thenReturn(new HashMap<>());
+
+        mockMvc.perform(get("/api/analytics/portfolios/1/target-drift"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", anEmptyMap()));
+    }
+    
+    @Test
+    @DisplayName("GET /api/analytics/portfolios/{id}/summary - Should handle negative gain/loss")
+    void getSummary_WithNegativeGainLoss_ShouldReturnNegative() throws Exception {
+        when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
+        when(analyticsService.getTotalMarketValue(1L)).thenReturn(new BigDecimal("8000.00"));
+        when(analyticsService.getTotalCost(1L)).thenReturn(new BigDecimal("10000.00"));
+        when(analyticsService.getTotalGainLoss(1L)).thenReturn(new BigDecimal("-2000.00"));
+
+        mockMvc.perform(get("/api/analytics/portfolios/1/summary"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalMarketValue").value(8000.00))
+                .andExpect(jsonPath("$.totalCost").value(10000.00))
+                .andExpect(jsonPath("$.totalGainLoss").value(-2000.00));
+    }
+    
+    @Test
+    @DisplayName("GET /api/analytics/portfolios/{id}/allocations - Should handle multiple asset types")
+    void getAllocationValues_WithMultipleAssetTypes_ShouldReturnAll() throws Exception {
+        Map<String, BigDecimal> allocations = new HashMap<>();
+        allocations.put("STOCK", new BigDecimal("6000.00"));
+        allocations.put("BOND", new BigDecimal("3000.00"));
+        allocations.put("ETF", new BigDecimal("1000.00"));
+
+        when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
+        when(analyticsService.getAllocationValues(1L)).thenReturn(allocations);
+
+        mockMvc.perform(get("/api/analytics/portfolios/1/allocations"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.STOCK").value(6000.00))
+                .andExpect(jsonPath("$.BOND").value(3000.00))
+                .andExpect(jsonPath("$.ETF").value(1000.00));
     }
 }

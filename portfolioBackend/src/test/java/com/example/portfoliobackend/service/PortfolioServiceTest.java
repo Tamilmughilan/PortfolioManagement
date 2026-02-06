@@ -402,5 +402,240 @@ class PortfolioServiceTest {
             assertThat(result).hasSize(2);
             assertThat(result).containsExactlyInAnyOrder("STOCK", "BOND");
         }
+        
+        @Test
+        @DisplayName("Should return empty list when no holdings")
+        void listAssetTypes_WhenNoHoldings_ShouldReturnEmptyList() {
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(Collections.emptyList());
+
+            List<String> result = portfolioService.listAssetTypes(1L);
+
+            assertThat(result).isEmpty();
+        }
+    }
+    
+    @Nested
+    @DisplayName("Update and Delete Tests")
+    class UpdateDeleteTests {
+        
+        @Test
+        @DisplayName("Should update portfolio when exists")
+        void updatePortfolio_WhenExists_ShouldUpdateAndReturn() {
+            Portfolio updated = new Portfolio();
+            updated.setPortfolioName("Updated Portfolio");
+            updated.setBaseCurrency("EUR");
+            
+            when(portfolioRepository.findById(1L)).thenReturn(Optional.of(testPortfolio));
+            when(portfolioRepository.save(any(Portfolio.class))).thenAnswer(invocation -> {
+                Portfolio saved = invocation.getArgument(0);
+                return saved;
+            });
+
+            Portfolio result = portfolioService.updatePortfolio(1L, updated);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getPortfolioName()).isEqualTo("Updated Portfolio");
+            assertThat(result.getBaseCurrency()).isEqualTo("EUR");
+            verify(portfolioRepository, times(1)).save(any(Portfolio.class));
+        }
+        
+        @Test
+        @DisplayName("Should return null when updating non-existent portfolio")
+        void updatePortfolio_WhenNotExists_ShouldReturnNull() {
+            Portfolio updated = new Portfolio();
+            when(portfolioRepository.findById(999L)).thenReturn(Optional.empty());
+
+            Portfolio result = portfolioService.updatePortfolio(999L, updated);
+
+            assertThat(result).isNull();
+            verify(portfolioRepository, never()).save(any(Portfolio.class));
+        }
+        
+        @Test
+        @DisplayName("Should delete portfolio when exists")
+        void deletePortfolio_WhenExists_ShouldReturnTrue() {
+            when(portfolioRepository.existsById(1L)).thenReturn(true);
+            doNothing().when(portfolioRepository).deleteById(1L);
+
+            boolean result = portfolioService.deletePortfolio(1L);
+
+            assertThat(result).isTrue();
+            verify(portfolioRepository, times(1)).deleteById(1L);
+        }
+        
+        @Test
+        @DisplayName("Should return false when deleting non-existent portfolio")
+        void deletePortfolio_WhenNotExists_ShouldReturnFalse() {
+            when(portfolioRepository.existsById(999L)).thenReturn(false);
+
+            boolean result = portfolioService.deletePortfolio(999L);
+
+            assertThat(result).isFalse();
+            verify(portfolioRepository, never()).deleteById(anyLong());
+        }
+        
+        @Test
+        @DisplayName("Should return null when updating non-existent holding")
+        void updateHolding_WhenNotExists_ShouldReturnNull() {
+            Holding updated = new Holding();
+            when(holdingRepository.findById(999L)).thenReturn(Optional.empty());
+
+            Holding result = portfolioService.updateHolding(999L, updated);
+
+            assertThat(result).isNull();
+            verify(holdingRepository, never()).save(any(Holding.class));
+        }
+        
+        @Test
+        @DisplayName("Should return false when deleting non-existent holding")
+        void deleteHolding_WhenNotExists_ShouldReturnFalse() {
+            when(holdingRepository.existsById(999L)).thenReturn(false);
+
+            boolean result = portfolioService.deleteHolding(999L);
+
+            assertThat(result).isFalse();
+            verify(holdingRepository, never()).deleteById(anyLong());
+        }
+        
+        @Test
+        @DisplayName("Should get holding by ID when exists")
+        void getHoldingById_WhenExists_ShouldReturnHolding() {
+            when(holdingRepository.findById(1L)).thenReturn(Optional.of(testHolding));
+
+            Holding result = portfolioService.getHoldingById(1L);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getHoldingId()).isEqualTo(1L);
+            verify(holdingRepository, times(1)).findById(1L);
+        }
+        
+        @Test
+        @DisplayName("Should return null when holding not found")
+        void getHoldingById_WhenNotExists_ShouldReturnNull() {
+            when(holdingRepository.findById(999L)).thenReturn(Optional.empty());
+
+            Holding result = portfolioService.getHoldingById(999L);
+
+            assertThat(result).isNull();
+        }
+        
+        @Test
+        @DisplayName("Should get target by ID when exists")
+        void getTargetById_WhenExists_ShouldReturnTarget() {
+            when(portfolioTargetRepository.findById(1L)).thenReturn(Optional.of(testTarget));
+
+            PortfolioTarget result = portfolioService.getTargetById(1L);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getTargetId()).isEqualTo(1L);
+            verify(portfolioTargetRepository, times(1)).findById(1L);
+        }
+        
+        @Test
+        @DisplayName("Should return null when target not found")
+        void getTargetById_WhenNotExists_ShouldReturnNull() {
+            when(portfolioTargetRepository.findById(999L)).thenReturn(Optional.empty());
+
+            PortfolioTarget result = portfolioService.getTargetById(999L);
+
+            assertThat(result).isNull();
+        }
+        
+        @Test
+        @DisplayName("Should update target when exists")
+        void updateTarget_WhenExists_ShouldUpdateAndReturn() {
+            PortfolioTarget updated = new PortfolioTarget();
+            updated.setAssetType("BOND");
+            updated.setTargetPercentage(new BigDecimal("40.00"));
+            
+            when(portfolioTargetRepository.findById(1L)).thenReturn(Optional.of(testTarget));
+            when(portfolioTargetRepository.save(any(PortfolioTarget.class))).thenAnswer(invocation -> {
+                PortfolioTarget saved = invocation.getArgument(0);
+                return saved;
+            });
+
+            PortfolioTarget result = portfolioService.updateTarget(1L, updated);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getAssetType()).isEqualTo("BOND");
+            assertThat(result.getTargetPercentage()).isEqualTo(new BigDecimal("40.00"));
+            verify(portfolioTargetRepository, times(1)).save(any(PortfolioTarget.class));
+        }
+        
+        @Test
+        @DisplayName("Should return null when updating non-existent target")
+        void updateTarget_WhenNotExists_ShouldReturnNull() {
+            PortfolioTarget updated = new PortfolioTarget();
+            when(portfolioTargetRepository.findById(999L)).thenReturn(Optional.empty());
+
+            PortfolioTarget result = portfolioService.updateTarget(999L, updated);
+
+            assertThat(result).isNull();
+            verify(portfolioTargetRepository, never()).save(any(PortfolioTarget.class));
+        }
+        
+        @Test
+        @DisplayName("Should delete target when exists")
+        void deleteTarget_WhenExists_ShouldReturnTrue() {
+            when(portfolioTargetRepository.existsById(1L)).thenReturn(true);
+            doNothing().when(portfolioTargetRepository).deleteById(1L);
+
+            boolean result = portfolioService.deleteTarget(1L);
+
+            assertThat(result).isTrue();
+            verify(portfolioTargetRepository, times(1)).deleteById(1L);
+        }
+        
+        @Test
+        @DisplayName("Should return false when deleting non-existent target")
+        void deleteTarget_WhenNotExists_ShouldReturnFalse() {
+            when(portfolioTargetRepository.existsById(999L)).thenReturn(false);
+
+            boolean result = portfolioService.deleteTarget(999L);
+
+            assertThat(result).isFalse();
+            verify(portfolioTargetRepository, never()).deleteById(anyLong());
+        }
+        
+        @Test
+        @DisplayName("Should get snapshot by ID when exists")
+        void getSnapshotById_WhenExists_ShouldReturnSnapshot() {
+            when(portfolioSnapshotRepository.findById(1L)).thenReturn(Optional.of(testSnapshot));
+
+            PortfolioSnapshot result = portfolioService.getSnapshotById(1L);
+
+            assertThat(result).isNotNull();
+            assertThat(result.getSnapshotId()).isEqualTo(1L);
+            verify(portfolioSnapshotRepository, times(1)).findById(1L);
+        }
+        
+        @Test
+        @DisplayName("Should return null when snapshot not found")
+        void getSnapshotById_WhenNotExists_ShouldReturnNull() {
+            when(portfolioSnapshotRepository.findById(999L)).thenReturn(Optional.empty());
+
+            PortfolioSnapshot result = portfolioService.getSnapshotById(999L);
+
+            assertThat(result).isNull();
+        }
+        
+        @Test
+        @DisplayName("Should refresh and get snapshots")
+        void refreshAndGetSnapshots_ShouldRecordAndReturnSnapshots() {
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(Collections.emptyList());
+            when(portfolioSnapshotRepository.save(any(PortfolioSnapshot.class))).thenAnswer(invocation -> {
+                PortfolioSnapshot saved = invocation.getArgument(0);
+                saved.setSnapshotId(1L);
+                return saved;
+            });
+            when(portfolioSnapshotRepository.findByPortfolioIdOrderBySnapshotDateDesc(1L))
+                    .thenReturn(Collections.singletonList(testSnapshot));
+
+            List<PortfolioSnapshot> result = portfolioService.refreshAndGetSnapshots(1L, "USD");
+
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(1);
+            verify(portfolioSnapshotRepository, times(1)).save(any(PortfolioSnapshot.class));
+        }
     }
 }

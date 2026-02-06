@@ -1,5 +1,6 @@
 package com.example.portfoliobackend.controller;
 
+import com.example.portfoliobackend.dto.UserDTO;
 import com.example.portfoliobackend.entity.User;
 import com.example.portfoliobackend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -117,21 +118,22 @@ class UserControllerTest {
     @Test
     @DisplayName("POST /api/users - Should create user")
     void createUser_ShouldReturnCreatedUser() throws Exception {
-        User newUser = new User();
-        newUser.setUsername("newuser");
-        newUser.setEmail("new@example.com");
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setUsername("newuser");
+        newUserDTO.setEmail("new@example.com");
 
         User savedUser = new User();
         savedUser.setUserId(1L);
         savedUser.setUsername("newuser");
         savedUser.setEmail("new@example.com");
         savedUser.setDefaultCurrency("INR");
+        savedUser.setCreatedAt(LocalDateTime.now());
 
         when(userService.createUser(any(User.class))).thenReturn(savedUser);
 
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newUser)))
+                        .content(objectMapper.writeValueAsString(newUserDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.userId", is(1)))
                 .andExpect(jsonPath("$.username", is("newuser")))
@@ -143,24 +145,27 @@ class UserControllerTest {
     @Test
     @DisplayName("PUT /api/users/{id} - Should update user when exists")
     void updateUser_WhenExists_ShouldReturnUpdatedUser() throws Exception {
-        User updateData = new User();
-        updateData.setUsername("updateduser");
-        updateData.setEmail("updated@example.com");
+        UserDTO updateDataDTO = new UserDTO();
+        updateDataDTO.setUsername("updateduser");
+        updateDataDTO.setEmail("updated@example.com");
+        updateDataDTO.setDefaultCurrency("USD");
 
         User updatedUser = new User();
         updatedUser.setUserId(1L);
         updatedUser.setUsername("updateduser");
         updatedUser.setEmail("updated@example.com");
         updatedUser.setDefaultCurrency("USD");
+        updatedUser.setCreatedAt(LocalDateTime.now());
 
         when(userService.updateUser(eq(1L), any(User.class))).thenReturn(updatedUser);
 
         mockMvc.perform(put("/api/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateData)))
+                        .content(objectMapper.writeValueAsString(updateDataDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("updateduser")))
-                .andExpect(jsonPath("$.email", is("updated@example.com")));
+                .andExpect(jsonPath("$.email", is("updated@example.com")))
+                .andExpect(jsonPath("$.defaultCurrency", is("USD")));
 
         verify(userService, times(1)).updateUser(eq(1L), any(User.class));
     }
@@ -168,14 +173,14 @@ class UserControllerTest {
     @Test
     @DisplayName("PUT /api/users/{id} - Should return 404 when not exists")
     void updateUser_WhenNotExists_ShouldReturn404() throws Exception {
-        User updateData = new User();
-        updateData.setUsername("updateduser");
+        UserDTO updateDataDTO = new UserDTO();
+        updateDataDTO.setUsername("updateduser");
 
         when(userService.updateUser(eq(999L), any(User.class))).thenReturn(null);
 
         mockMvc.perform(put("/api/users/999")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateData)))
+                        .content(objectMapper.writeValueAsString(updateDataDTO)))
                 .andExpect(status().isNotFound());
     }
 

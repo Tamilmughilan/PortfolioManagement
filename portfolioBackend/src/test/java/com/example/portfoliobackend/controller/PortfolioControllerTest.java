@@ -1,5 +1,9 @@
 package com.example.portfoliobackend.controller;
 
+import com.example.portfoliobackend.dto.HoldingDTO;
+import com.example.portfoliobackend.dto.PortfolioDTO;
+import com.example.portfoliobackend.dto.PortfolioSnapshotDTO;
+import com.example.portfoliobackend.dto.PortfolioTargetDTO;
 import com.example.portfoliobackend.entity.Holding;
 import com.example.portfoliobackend.entity.Portfolio;
 import com.example.portfoliobackend.entity.PortfolioSnapshot;
@@ -101,7 +105,10 @@ class PortfolioControllerTest {
             mockMvc.perform(get("/api/portfolios"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
-                    .andExpect(jsonPath("$[0].portfolioName", is("Test Portfolio")));
+                    .andExpect(jsonPath("$[0].portfolioName", is("Test Portfolio")))
+                    .andExpect(jsonPath("$[0].portfolioId", is(1)))
+                    .andExpect(jsonPath("$[0].userId", is(1)))
+                    .andExpect(jsonPath("$[0].baseCurrency", is("USD")));
         }
 
         @Test
@@ -124,7 +131,9 @@ class PortfolioControllerTest {
             mockMvc.perform(get("/api/portfolios/1"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.portfolioId", is(1)))
-                    .andExpect(jsonPath("$.portfolioName", is("Test Portfolio")));
+                    .andExpect(jsonPath("$.portfolioName", is("Test Portfolio")))
+                    .andExpect(jsonPath("$.userId", is(1)))
+                    .andExpect(jsonPath("$.baseCurrency", is("USD")));
         }
 
         @Test
@@ -140,12 +149,18 @@ class PortfolioControllerTest {
         @DisplayName("POST /api/portfolios - Should create portfolio")
         void createPortfolio_ShouldReturnCreatedPortfolio() throws Exception {
             when(portfolioService.createPortfolio(any(Portfolio.class))).thenReturn(testPortfolio);
+            
+            PortfolioDTO portfolioDTO = new PortfolioDTO();
+            portfolioDTO.setUserId(1L);
+            portfolioDTO.setPortfolioName("Test Portfolio");
+            portfolioDTO.setBaseCurrency("USD");
 
             mockMvc.perform(post("/api/portfolios")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(testPortfolio)))
+                            .content(objectMapper.writeValueAsString(portfolioDTO)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.portfolioId", is(1)));
+                    .andExpect(jsonPath("$.portfolioId", is(1)))
+                    .andExpect(jsonPath("$.portfolioName", is("Test Portfolio")));
         }
 
         @Test
@@ -190,11 +205,20 @@ class PortfolioControllerTest {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
             when(portfolioService.addHolding(any(Holding.class))).thenReturn(testHolding);
 
+            HoldingDTO holdingDTO = new HoldingDTO();
+            holdingDTO.setAssetName("Apple Inc");
+            holdingDTO.setAssetType("STOCK");
+            holdingDTO.setQuantity(new BigDecimal("10"));
+            holdingDTO.setPurchasePrice(new BigDecimal("150.00"));
+            holdingDTO.setCurrentPrice(new BigDecimal("175.00"));
+            holdingDTO.setCurrency("USD");
+
             mockMvc.perform(post("/api/portfolios/1/holdings")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(testHolding)))
+                            .content(objectMapper.writeValueAsString(holdingDTO)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.assetName", is("Apple Inc")));
+                    .andExpect(jsonPath("$.assetName", is("Apple Inc")))
+                    .andExpect(jsonPath("$.assetType", is("STOCK")));
         }
 
         @Test
@@ -231,11 +255,16 @@ class PortfolioControllerTest {
             when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
             when(portfolioService.addTarget(any(PortfolioTarget.class))).thenReturn(testTarget);
 
+            PortfolioTargetDTO targetDTO = new PortfolioTargetDTO();
+            targetDTO.setAssetType("STOCK");
+            targetDTO.setTargetPercentage(new BigDecimal("60.00"));
+
             mockMvc.perform(post("/api/portfolios/1/targets")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(testTarget)))
+                            .content(objectMapper.writeValueAsString(targetDTO)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.targetPercentage", is(60.00)));
+                    .andExpect(jsonPath("$.targetPercentage").value(60.00))
+                    .andExpect(jsonPath("$.assetType", is("STOCK")));
         }
     }
 
@@ -253,7 +282,8 @@ class PortfolioControllerTest {
             mockMvc.perform(get("/api/portfolios/1/snapshots"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
-                    .andExpect(jsonPath("$[0].totalValue", is(10000.00)));
+                    .andExpect(jsonPath("$[0].totalValue").value(10000.00))
+                    .andExpect(jsonPath("$[0].currency", is("USD")));
         }
 
         @Test
@@ -264,6 +294,20 @@ class PortfolioControllerTest {
             when(portfolioService.refreshAndGetSnapshots(eq(1L), isNull())).thenReturn(snapshots);
 
             mockMvc.perform(post("/api/portfolios/1/snapshots/refresh"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$", hasSize(1)))
+                    .andExpect(jsonPath("$[0].totalValue").value(10000.00));
+        }
+        
+        @Test
+        @DisplayName("POST /api/portfolios/{id}/snapshots/refresh - Should refresh snapshots with currency")
+        void refreshSnapshots_WithCurrency_ShouldReturnUpdatedSnapshots() throws Exception {
+            when(portfolioService.getPortfolioById(1L)).thenReturn(testPortfolio);
+            List<PortfolioSnapshot> snapshots = Arrays.asList(testSnapshot);
+            when(portfolioService.refreshAndGetSnapshots(eq(1L), eq("EUR"))).thenReturn(snapshots);
+
+            mockMvc.perform(post("/api/portfolios/1/snapshots/refresh")
+                            .param("currency", "EUR"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)));
         }
@@ -283,6 +327,15 @@ class PortfolioControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().string("10000.00"));
         }
+        
+        @Test
+        @DisplayName("GET /api/portfolios/{id}/total-value - Should return 404 when portfolio not exists")
+        void getTotalValue_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(get("/api/portfolios/999/total-value"))
+                    .andExpect(status().isNotFound());
+        }
 
         @Test
         @DisplayName("GET /api/portfolios/{id}/asset-types - Should return asset types")
@@ -295,6 +348,135 @@ class PortfolioControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(2)))
                     .andExpect(jsonPath("$", containsInAnyOrder("STOCK", "BOND")));
+        }
+        
+        @Test
+        @DisplayName("GET /api/portfolios/{id}/asset-types - Should return 404 when portfolio not exists")
+        void getAssetTypes_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(get("/api/portfolios/999/asset-types"))
+                    .andExpect(status().isNotFound());
+        }
+    }
+    
+    @Nested
+    @DisplayName("Update and Delete Tests")
+    class UpdateDeleteTests {
+        
+        @Test
+        @DisplayName("PUT /api/portfolios/{id} - Should update portfolio")
+        void updatePortfolio_ShouldReturnUpdatedPortfolio() throws Exception {
+            when(portfolioService.updatePortfolio(eq(1L), any(Portfolio.class))).thenReturn(testPortfolio);
+            
+            PortfolioDTO portfolioDTO = new PortfolioDTO();
+            portfolioDTO.setUserId(1L);
+            portfolioDTO.setPortfolioName("Updated Portfolio");
+            portfolioDTO.setBaseCurrency("EUR");
+
+            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/portfolios/1")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(portfolioDTO)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.portfolioId", is(1)));
+        }
+        
+        @Test
+        @DisplayName("PUT /api/portfolios/{id} - Should return 404 when portfolio not exists")
+        void updatePortfolio_WhenNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.updatePortfolio(eq(999L), any(Portfolio.class))).thenReturn(null);
+            
+            PortfolioDTO portfolioDTO = new PortfolioDTO();
+            portfolioDTO.setUserId(1L);
+            portfolioDTO.setPortfolioName("Updated Portfolio");
+
+            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/portfolios/999")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(portfolioDTO)))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("DELETE /api/portfolios/{id} - Should return 404 when portfolio not exists")
+        void deletePortfolio_WhenNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.deletePortfolio(999L)).thenReturn(false);
+
+            mockMvc.perform(delete("/api/portfolios/999"))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("GET /api/portfolios/{id}/holdings - Should return 404 when portfolio not exists")
+        void getHoldings_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(get("/api/portfolios/999/holdings"))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("POST /api/portfolios/{id}/holdings - Should return 404 when portfolio not exists")
+        void addHolding_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+            
+            HoldingDTO holdingDTO = new HoldingDTO();
+            holdingDTO.setAssetName("Test Asset");
+
+            mockMvc.perform(post("/api/portfolios/999/holdings")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(holdingDTO)))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("DELETE /api/portfolios/{id}/holdings/{holdingId} - Should return 404 when holding not exists")
+        void deleteHolding_WhenNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getHoldingById(999L)).thenReturn(null);
+
+            mockMvc.perform(delete("/api/portfolios/1/holdings/999"))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("GET /api/portfolios/{id}/targets - Should return 404 when portfolio not exists")
+        void getTargets_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(get("/api/portfolios/999/targets"))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("POST /api/portfolios/{id}/targets - Should return 404 when portfolio not exists")
+        void addTarget_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+            
+            PortfolioTargetDTO targetDTO = new PortfolioTargetDTO();
+            targetDTO.setAssetType("STOCK");
+            targetDTO.setTargetPercentage(new BigDecimal("60.00"));
+
+            mockMvc.perform(post("/api/portfolios/999/targets")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(targetDTO)))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("GET /api/portfolios/{id}/snapshots - Should return 404 when portfolio not exists")
+        void getSnapshots_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(get("/api/portfolios/999/snapshots"))
+                    .andExpect(status().isNotFound());
+        }
+        
+        @Test
+        @DisplayName("POST /api/portfolios/{id}/snapshots/refresh - Should return 404 when portfolio not exists")
+        void refreshSnapshots_WhenPortfolioNotExists_ShouldReturn404() throws Exception {
+            when(portfolioService.getPortfolioById(999L)).thenReturn(null);
+
+            mockMvc.perform(post("/api/portfolios/999/snapshots/refresh"))
+                    .andExpect(status().isNotFound());
         }
     }
 }

@@ -256,5 +256,49 @@ class AnalyticsServiceTest {
             assertThat(result.get("STOCK")).isEqualByComparingTo(new BigDecimal("40.00"));
             assertThat(result.get("BOND")).isEqualByComparingTo(new BigDecimal("-40.00"));
         }
+        
+        @Test
+        @DisplayName("Should return empty map when no targets")
+        void getTargetDriftPercentages_WhenNoTargets_ShouldReturnEmptyMap() {
+            List<Holding> holdings = Arrays.asList(stockHolding, bondHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
+            when(portfolioTargetRepository.findByPortfolioId(1L)).thenReturn(Collections.emptyList());
+
+            Map<String, BigDecimal> result = analyticsService.getTargetDriftPercentages(1L);
+
+            assertThat(result).isEmpty();
+        }
+        
+        @Test
+        @DisplayName("Should handle null current price gracefully")
+        void getTotalMarketValue_WhenNullCurrentPrice_ShouldSkipHolding() {
+            Holding nullPriceHolding = new Holding();
+            nullPriceHolding.setQuantity(new BigDecimal("10"));
+            // currentPrice is null
+
+            List<Holding> holdings = Arrays.asList(stockHolding, nullPriceHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
+
+            BigDecimal result = analyticsService.getTotalMarketValue(1L);
+
+            // Only stockHolding: 10 * 150 = 1500
+            assertThat(result).isEqualByComparingTo(new BigDecimal("1500"));
+        }
+        
+        @Test
+        @DisplayName("Should handle null purchase price gracefully")
+        void getTotalCost_WhenNullPurchasePrice_ShouldSkipHolding() {
+            Holding nullPriceHolding = new Holding();
+            nullPriceHolding.setQuantity(new BigDecimal("10"));
+            // purchasePrice is null
+
+            List<Holding> holdings = Arrays.asList(stockHolding, nullPriceHolding);
+            when(holdingRepository.findByPortfolioId(1L)).thenReturn(holdings);
+
+            BigDecimal result = analyticsService.getTotalCost(1L);
+
+            // Only stockHolding: 10 * 100 = 1000
+            assertThat(result).isEqualByComparingTo(new BigDecimal("1000"));
+        }
     }
 }
