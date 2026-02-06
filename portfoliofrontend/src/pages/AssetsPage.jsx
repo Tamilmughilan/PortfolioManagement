@@ -129,6 +129,9 @@ const AssetsPage = ({ portfolioId, onHoldingUpdated }) => {
                     const padding = 50;
                     const barSpacing = barHeight / holdingsWithValue.length;
                     const colors = ['#DC2626', '#E11D48', '#F97316', '#10b981', '#f59e0b', '#06b6d4', '#8b5cf6', '#ec4899'];
+                    const labelRightPad = 10;
+                    const labelMargin = 10;
+                    const svgRight = padding + barWidth;
                     
                     return (
                       <>
@@ -136,6 +139,12 @@ const AssetsPage = ({ portfolioId, onHoldingUpdated }) => {
                           const barLength = (holding.value / maxValue) * barWidth;
                           const yPos = padding + index * barSpacing;
                           const percent = (holding.value / totalValue) * 100;
+                          // If the label would overflow the chart area, render it inside the bar (right-aligned)
+                          const labelXOutside = padding + barLength + labelMargin;
+                          const shouldLabelBeInside = labelXOutside > (svgRight - 120);
+                          const labelX = shouldLabelBeInside
+                                  ? Math.max(padding + 6, padding + barLength - 6)
+                                  : Math.min(svgRight - labelRightPad, labelXOutside);
                           
                           return (
                             <g key={holding.holdingId}>
@@ -152,10 +161,11 @@ const AssetsPage = ({ portfolioId, onHoldingUpdated }) => {
                                 rx="4"
                               />
                               <text
-                                x={padding + barLength + 10}
+                                x={labelX}
                                 y={yPos + 4}
                                 fontSize="10"
-                                fill="var(--text-light)"
+                                fill={shouldLabelBeInside ? "var(--text-dark)" : "var(--text-light)"}
+                                textAnchor={shouldLabelBeInside ? "end" : "start"}
                               >
                                 {percent.toFixed(1)}% ({holding.value.toLocaleString()})
                               </text>

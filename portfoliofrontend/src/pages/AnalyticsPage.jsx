@@ -273,6 +273,7 @@ const AnalyticsPage = ({ portfolioId }) => {
                     const barHeight = 160;
                     const barWidth = 300;
                     const barSpacing = barHeight / driftEntries.length;
+                    const svgRight = xStart + barWidth;
                     
                     return driftEntries.map(([type, driftValue], index) => {
                       const target = targets.find(t => t.assetType === type);
@@ -282,6 +283,10 @@ const AnalyticsPage = ({ portfolioId }) => {
                       const yPos = 20 + index * barSpacing;
                       const targetX = xStart + (targetPercent / maxPercent) * barWidth;
                       const actualX = xStart + (actualPercent / maxPercent) * barWidth;
+                      const label = `${actualPercent.toFixed(1)}% / ${targetPercent.toFixed(1)}%`;
+                      // Keep label inside the SVG viewBox so it never overlaps bars
+                      const labelX = svgRight + 5;
+                      const labelAnchor = "start";
                       
                       return (
                         <g key={type}>
@@ -289,8 +294,14 @@ const AnalyticsPage = ({ portfolioId }) => {
                           <line x1={xStart} y1={yPos} x2={xStart + barWidth} y2={yPos} stroke="var(--border)" strokeWidth="1" />
                           <rect x={targetX - 2} y={yPos - 6} width="4" height="12" fill="#10b981" opacity="0.6" />
                           <rect x={xStart} y={yPos - 4} width={actualX - xStart} height="8" fill={driftValue >= 0 ? '#ef4444' : '#3b82f6'} opacity="0.7" />
-                          <text x={xStart + barWidth + 5} y={yPos + 3} fontSize="9" fill="var(--text-light)">
-                            {actualPercent.toFixed(1)}% / {targetPercent.toFixed(1)}%
+                          <text
+                            x={labelX}
+                            y={yPos + 3}
+                            fontSize="9"
+                            fill="var(--text-light)"
+                            textAnchor={labelAnchor}
+                          >
+                            {label}
                           </text>
                         </g>
                       );

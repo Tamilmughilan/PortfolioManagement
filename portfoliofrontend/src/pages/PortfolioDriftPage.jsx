@@ -280,6 +280,9 @@ const PortfolioDriftPage = ({ portfolioId }) => {
                     const barHeight = 250;
                     const padding = 60;
                     const barSpacing = barHeight / holdingsWithTargets.length;
+                    const svgRight = padding + barWidth;
+                    const labelMargin = 10;
+                    const labelRightPad = 10;
                     
                     return (
                       <>
@@ -290,6 +293,12 @@ const PortfolioDriftPage = ({ portfolioId }) => {
                           const targetBar = (targetVal / maxValue) * barWidth;
                           const yPos = padding + index * barSpacing;
                           const drift = holding.valueDriftPercentage || 0;
+                          const barMax = Math.max(currentBar, targetBar);
+                          const labelXOutside = padding + barMax + labelMargin;
+                          const shouldLabelBeInside = labelXOutside > (svgRight - 80);
+                          const labelX = shouldLabelBeInside
+                                  ? Math.max(padding + 6, padding + barMax - 6)
+                                  : Math.min(svgRight - labelRightPad, labelXOutside);
                           
                           return (
                             <g key={holding.holdingId || index}>
@@ -315,10 +324,11 @@ const PortfolioDriftPage = ({ portfolioId }) => {
                                 rx="2"
                               />
                               <text
-                                x={padding + Math.max(currentBar, targetBar) + 10}
+                                x={labelX}
                                 y={yPos + 4}
                                 fontSize="10"
-                                fill="var(--text-light)"
+                                fill={shouldLabelBeInside ? "var(--text-dark)" : "var(--text-light)"}
+                                textAnchor={shouldLabelBeInside ? "end" : "start"}
                               >
                                 {drift >= 0 ? '+' : ''}{drift.toFixed(1)}%
                               </text>
