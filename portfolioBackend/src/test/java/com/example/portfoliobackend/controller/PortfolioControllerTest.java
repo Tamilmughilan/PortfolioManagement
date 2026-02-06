@@ -8,6 +8,7 @@ import com.example.portfoliobackend.entity.Holding;
 import com.example.portfoliobackend.entity.Portfolio;
 import com.example.portfoliobackend.entity.PortfolioSnapshot;
 import com.example.portfoliobackend.entity.PortfolioTarget;
+import com.example.portfoliobackend.service.ForecastService;
 import com.example.portfoliobackend.service.PortfolioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +55,9 @@ class PortfolioControllerTest {
     @MockitoBean
     private PortfolioService portfolioService;
 
+    @MockitoBean
+    private ForecastService forecastService;
+
     private Portfolio testPortfolio;
     private Holding testHolding;
     private PortfolioTarget testTarget;
@@ -60,12 +65,14 @@ class PortfolioControllerTest {
 
     @BeforeEach
     void setUp() {
+        LocalDateTime now = LocalDateTime.now();
+        
         testPortfolio = new Portfolio();
         testPortfolio.setPortfolioId(1L);
         testPortfolio.setUserId(1L);
         testPortfolio.setPortfolioName("Test Portfolio");
         testPortfolio.setBaseCurrency("USD");
-        testPortfolio.setCreatedAt(LocalDateTime.now());
+        testPortfolio.setCreatedAt(now);
 
         testHolding = new Holding();
         testHolding.setHoldingId(1L);
@@ -77,6 +84,7 @@ class PortfolioControllerTest {
         testHolding.setCurrentPrice(new BigDecimal("175.00"));
         testHolding.setCurrency("USD");
         testHolding.setPurchaseDate(LocalDate.now());
+        testHolding.setTargetValue(null); // Explicitly set to null
 
         testTarget = new PortfolioTarget();
         testTarget.setTargetId(1L);
@@ -374,7 +382,7 @@ class PortfolioControllerTest {
             portfolioDTO.setPortfolioName("Updated Portfolio");
             portfolioDTO.setBaseCurrency("EUR");
 
-            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/portfolios/1")
+            mockMvc.perform(put("/api/portfolios/1")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(portfolioDTO)))
                     .andExpect(status().isOk())
@@ -390,7 +398,7 @@ class PortfolioControllerTest {
             portfolioDTO.setUserId(1L);
             portfolioDTO.setPortfolioName("Updated Portfolio");
 
-            mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/portfolios/999")
+            mockMvc.perform(put("/api/portfolios/999")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(portfolioDTO)))
                     .andExpect(status().isNotFound());
