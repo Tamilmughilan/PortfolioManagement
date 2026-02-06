@@ -273,13 +273,13 @@ const AnalyticsPage = ({ portfolioId }) => {
                     const barHeight = 160;
                     const barWidth = 300;
                     const barSpacing = barHeight / driftEntries.length;
+                    const xStart = 50;
                     const svgRight = xStart + barWidth;
                     
                     return driftEntries.map(([type, driftValue], index) => {
                       const target = targets.find(t => t.assetType === type);
                       const actualPercent = allocations[type] || 0;
                       const targetPercent = target?.targetPercentage || 0;
-                      const xStart = 50;
                       const yPos = 20 + index * barSpacing;
                       const targetX = xStart + (targetPercent / maxPercent) * barWidth;
                       const actualX = xStart + (actualPercent / maxPercent) * barWidth;
